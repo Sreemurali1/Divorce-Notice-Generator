@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Advocate Dashboard</title>
+  <style>
+    :root {
+      --dark-green: #075E54;
+      --light-green: #25D366;
+      --msg-user: #DCF8C6;
+      --msg-bot: #E5E5E5;
+      --bg: #edf5f0;
+      --text-dark: #000022;
+      --text-light: #fff;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      background: var(--bg);
+      margin: 0;
+      padding: 0;
+      color: var(--dark-green);
+      display: flex;
+    }
+
+    /* Side-nav styling */
+    .side-nav {
+      width: 220px;
+      background: var(--dark-green);
+      color: var(--text-light);
+      padding: 30px 20px;
+      box-shadow: 0 4px 30px rgb(0 0 0 / 0.4);
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      border-radius: 0 20px 20px 0;
+      transform: translateZ(0);
+      transition: transform 0.3s ease;
+    }
+
+    .side-nav h2 {
+      color: var(--light-green);
+      margin-bottom: 30px;
+      font-size: 1.7rem;
+      font-weight: bold;
+      text-transform: uppercase;
+      border-bottom: 2px solid var(--light-green);
+      padding-bottom: 10px;
+    }
+
+    .side-nav h3 {
+      color: var(--light-green);
+      margin-bottom: 15px;
+      font-size: 1.3rem;
+      font-family: "Georgia", serif;
+      font-weight: bold;
+      border-bottom: 1px solid var(--light-green);
+      padding-bottom: 5px;
+    }
+
+    .side-nav ul.profile-list {
+      list-style: none;
+      padding: 20px;
+      margin-bottom: 20px;
+      background: #ffffff;
+      border-radius: 10px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+      color: var(--dark-green);
+      font-family: "Georgia", serif;
+      border-left: 5px solid var(--light-green);
+    }
+
+    .side-nav ul.profile-list li {
+      margin-bottom: 15px;
+      font-size: 1rem;
+      border-bottom: 1px solid #ccc;
+      padding-bottom: 8px;
+    }
+
+    .side-nav ul.profile-list li:last-child {
+      border-bottom: none;
+    }
+
+    /* Main content */
+    main.container {
+      flex-grow: 1;
+      padding: 20px;
+    }
+
+    main.container h1 {
+      color: var(--dark-green);
+      text-align: center;
+      margin-bottom: 20px;
+      font-size: 1.5rem;
+    }
+
+    .main-content {
+      display: flex;
+      gap: 20px;
+      padding: 20px;
+      border-left: 5px solid var(--dark-green);
+      padding-left: 20px;
+    }
+
+    .chatbot {
+      flex: 1;
+      max-width: 40%;
+      background: #fff;
+      padding: 20px;
+      border-radius: 20px;
+      box-shadow: 0 2px 5px rgb(0 0 0 / 0.5);
+    }
+
+    .client-history {
+      flex: 2;
+      background: #fff;
+      padding: 20px;
+      border-radius: 20px;
+      box-shadow: 0 2px 5px rgb(0 0 0 / 0.5);
+    }
+
+    section.chatbot h2,
+    section.client-history h2 {
+      color: var(--dark-green);
+      margin-bottom: 20px;
+      font-size: 1.4rem;
+      font-weight: bold;
+    }
+
+    #chat-box {
+      height: 400px;
+      overflow-y: auto;
+      border: none;
+      padding: 10px;
+      border-radius: 20px;
+      background: #f5f5f5;
+      margin-bottom: 20px;
+    }
+
+    .message {
+      margin-bottom: 10px;
+      padding: 10px 15px;
+      border-radius: 20px;
+      max-width: 80%;
+      word-wrap: break-word;
+      clear: both;
+      position: relative;
+      animation: fadeIn 0.5s ease-in;
+    }
+
+    .user {
+      background: var(--msg-user);
+      color: var(--text-dark);
+      float: right;
+      text-align: right;
+    }
+
+    .bot {
+      background: var(--msg-bot);
+      color: var(--text-dark);
+      float: left;
+      text-align: left;
+    }
+
+    form.chat-form {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+
+    form.chat-form input[type='text'] {
+      flex: 1;
+      padding: 0.75rem;
+      font-size: 1rem;
+      border-radius: 20px;
+      border: none;
+      outline: none;
+      background: #f0f0f0;
+      color: var(--dark-green);
+      box-shadow: 0 2px 5px rgb(0 0 0 / 0.5);
+    }
+
+    form.chat-form button {
+      background: var(--dark-green);
+      color: var(--text-light);
+      border: none;
+      padding: 0.75rem 1.5rem;
+      border-radius: 20px;
+      cursor: pointer;
+      font-size: 1rem;
+      box-shadow: 0 2px 5px rgb(0 0 0 / 0.5);
+      transition: background 0.3s ease;
+    }
+
+    form.chat-form button:hover {
+      background: var(--light-green);
+      color: var(--dark-green);
+    }
+
+    .spinner {
+      border: 4px solid #f3f3f3;
+      border-top: 4px solid var(--dark-green);
+      border-radius: 50%;
+      width: 24px;
+      height: 24px;
+      animation: spin 1s linear infinite;
+      margin: 10px auto;
+    }
+
+    .table-wrapper {
+      overflow-x: auto;
+    }
+
+    .client-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.95rem;
+      background: #fefefe;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    }
+
+    .client-table th,
+    .client-table td {
+      padding: 12px 15px;
+      text-align: left;
+      border-bottom: 1px solid #ddd;
+    }
+
+    .client-table thead {
+      background-color: var(--dark-green);
+      color: white;
+      text-transform: uppercase;
+      font-size: 0.9rem;
+    }
+
+    .client-table tbody tr:nth-child(even) {
+      background-color: #f9f9f9;
+    }
+
+    .client-table tbody tr:hover {
+      background-color: #f1f1f1;
+    }
+
+    .client-table a {
+      color: var(--dark-green);
+      text-decoration: none;
+      font-weight: bold;
+    }
+
+    .client-table a:hover {
+      text-decoration: underline;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    @keyframes fadeIn {
+      from {
+        transform: translateY(20px);
+        opacity: 0;
+      }
+      to {
+        transform: translateY(0px);
+        opacity: 1;
+      }
+    }
+
+    @media (max-width: 900px) {
+      .main-content {
+        flex-direction: column;
+        border-left: none;
+        padding-left: 0;
+      }
+
+      .chatbot, .client-history {
+        max-width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Side-nav Section -->
+  <nav class="side-nav">
+    <h2>Advocate Dashboard</h2>
+
+    <h3>Your Profile</h3>
+    <ul class="profile-list">
+      <li><strong>Full Name:</strong><br><span>{{ advocate.user.first_name }} {{ advocate.user.last_name }}</span></li>
+      <li><strong>Enrollment Number:</strong> {{ advocate.enrollment_number }}</li>
+      <li><strong>Email:</strong> {{ advocate.email }}</li>
+      <li><strong>Mobile Number:</strong> {{ advocate.phone }}</li>
+ 
+    </ul>
+  </nav>
+
+  <!-- Main Section -->
+  <main class="container">
+    <h1>Legal Document Dashboard</h1>
+
+    <div class="main-content">
+      <!-- Chatbot Section -->
+      <section class="chatbot">
+        <h2>Chatbot</h2>
+        <section id="chat-box"></section>
+
+        <form id="chat-form" class="chat-form" onsubmit="handleUserInput(event)">
+          {% csrf_token %}
+          <input id="query" name="query" type="text" placeholder="Type your response…" required autocomplete="off" />
+          <button>Send</button>
+        </form>
+      </section>
+
+      <!-- Client History Section -->
+      <section class="client-history">
+        <h2>Client Data History</h2>
+        {% if clients %}
+          <div class="table-wrapper">
+            <table class="client-table">
+              <thead>
+                <tr>
+                  <th>Filer</th>
+                  <th>Husband's Name</th>
+                  <th>Wife's Name</th>
+                  <th>Marriage Date</th>
+                  <th>Document</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for client in clients %}
+                  <tr>
+                    <td>{{ client.filer }}</td>
+                    <td>{{ client.husband_name }}</td>
+                    <td>{{ client.wife_name }}</td>
+                    <td>{{ client.marriage_Date|date:"d-m-Y" }}</td>
+                    <td>
+                      {% if client.document %}
+                        <a href="{{ client.document.url }}" target="_blank">Download</a>
+                      {% else %}
+                        —
+                      {% endif %}
+                    </td>
+                  </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        {% else %}
+          <p>No clients found.</p>
+        {% endif %}
+      </section>
+    </div>
+  </main>
+
+  <script>
+    const chatBox = document.getElementById("chat-box");
+    const input = document.getElementById("query");
+    const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+
+    let currentQuestionIndex = 0;
+    let userResponses = {};
+
+    const questions = [
+      { key: "who_is_filing", text: "Who is filing the divorce notice? (Husband/Wife)" },
+      { key: "husband_name", text: "What is the husband's full name?" },
+      { key: "husband_address", text: "What is the husband's address?" },
+      { key: "wife_name", text: "What is the wife's full name?" },
+      { key: "wife_address", text: "What is the wife's address?" },
+      { key: "marriage_date", text: "What is the date of marriage? (YYYY-MM-DD)" },
+      { key: "marriage_place", text: "Where was the marriage held?" },
+      { key: "reason", text: "Mention the grounds for divorce (e.g., abuse, dowry demand, etc.):" }
+    ];
+
+    function appendMessage(text, sender) {
+      const msg = document.createElement("div");
+      msg.className = `message ${sender}`;
+      msg.textContent = text;
+      chatBox.appendChild(msg);
+      chatBox.scrollTop = chatBox.scrollHeight;
+    }
+
+    function showSpinner() {
+      const spinner = document.createElement("div");
+      spinner.className = "spinner";
+      spinner.id = "spinner";
+      chatBox.appendChild(spinner);
+
+      const generatingMsg = document.createElement("div");
+      generatingMsg.className = "bot message";
+      generatingMsg.id = "generatedMsg";
+      generatingMsg.textContent = "Generating document, please wait...";
+      chatBox.appendChild(generatingMsg);
+      chatBox.scrollTop = chatBox.scrollHeight;
+    }
+
+    function removeSpinner() {
+      const spinner = document.getElementById("spinner");
+      if (spinner) spinner.remove();
+      const generatedMsg = document.getElementById("generatedMsg");
+      if (generatedMsg) generatedMsg.remove();
+    }
+
+    async function askNextQuestion() {
+      if (currentQuestionIndex < questions.length) {
+        appendMessage(questions[currentQuestionIndex].text, "bot");
+      } else {
+        await generateLegalNotice();
+      }
+    }
+
+    async function generateLegalNotice() {
+      showSpinner();
+
+      const data = new URLSearchParams();
+      for (const key in userResponses) {
+        data.append(key, userResponses[key]);
+      }
+
+      try {
+        const response = await fetch("/generate_legal_doc_wordfile/", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+            "X-CSRFToken": csrfToken
+          },
+          body: data
+        });
+
+        removeSpinner();
+
+        if (!response.ok) throw new Error(await response.text());
+
+        const blob = await response.blob();
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = "divorce_notice.docx";
+        a.textContent = "Download Divorce Notice 📁";
+        a.className = "bot message";
+        chatBox.appendChild(a);
+        chatBox.scrollTop = chatBox.scrollHeight;
+
+      } catch (error) {
+        console.error(error);
+        removeSpinner();
+        appendMessage("Sorry, an error occurred while generating the notice.", "bot");
+      }
+    }
+
+    function resetChat() {
+      chatBox.innerHTML = "";
+      currentQuestionIndex = 0;
+      userResponses = {};
+      appendMessage("Hi! I’m your legal assistant. Type /start to begin.", "bot");
+      askNextQuestion();
+    }
+
+    function handleUserInput(event) {
+      event.preventDefault();
+      const userMessage = input.value.trim();
+      if (!userMessage) return;
+
+      appendMessage(userMessage, "user");
+
+      if (userMessage.toLowerCase() === "/start") {
+        resetChat();
+        input.value = "";
+        return;
+      }
+
+      const currentKey = questions[currentQuestionIndex]?.key;
+      if (currentKey) {
+        userResponses[currentKey] = userMessage;
+      }
+
+      input.value = "";
+      currentQuestionIndex++;
+      setTimeout(askNextQuestion, 500);
+    }
+
+    function loadPreviousChat() {
+      appendMessage("Hi! I’m your legal assistant. Type /start to begin.", "bot");
+    }
+
+    window.onload = loadPreviousChat;
+  </script>
+</body>
+</html>

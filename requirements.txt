@@ -1,0 +1,4 @@
+groq
+python-dotenv
+reportlab
+python-docx
