@@ -16,6 +16,11 @@ from django.core.files import File
 from groq import Groq
 from dotenv import load_dotenv
 from datetime import datetime
+from django.core.files.storage import default_storage
+from django.core.files.base import ContentFile
+from django.urls import reverse
+
+
 
 
 # Load Enviromental Veriable
@@ -34,43 +39,32 @@ except Exception as e:
     print(f"Error initializing Groq client: {e}")
     groq_client = None
 
-# Generate Divorce Notice using Groq API
 @csrf_exempt
 @login_required
 def generate_legal_doc_wordfile(request):
     if request.method == "POST":
         try:
+            import tempfile
 
-            # Get raw data directly from POST form fields
+            # Extract form data
             who_is_filing = request.POST.get("who_is_filing")
             husband_name = request.POST.get("husband_name")
             husband_address = request.POST.get("husband_address")
             wife_name = request.POST.get("wife_name")
             wife_address = request.POST.get("wife_address")
             reason = request.POST.get("reason")
-            marriage_date = request.POST.get("marriage_date")  # e.g. "2025-06-16"
-
-            # Parse marriage date to datetime.date
+            marriage_date = request.POST.get("marriage_date")
             marriage_dt = datetime.strptime(marriage_date, '%d-%m-%Y').date() if marriage_date else None
 
-
-            # For session/debugging
-            request.session["chat_history"] = str(request.POST)
-            request.session["chat_history_raw"] = str(request.POST)
-
+            # Get advocate info
             advocate = Advocate.objects.get(user=request.user)
-
             advocate_details = (
-                f"From:\n"
-                f"Advocate {advocate.name}\n"
+                f"From:\nAdvocate {advocate.name}\n"
                 f"Enrollment Number: {advocate.enrollment_number}\n"
                 f"Address: {advocate.address}\n"
             )
 
-            # Prepare query for LLM
             prompt_query = (
-                f"This is a divorce notice. Please draft a formal legal letter based on the following details:\n"
-                f"A divorce notice. Details: "
                 f"{who_is_filing} is filing for divorce. "
                 f"Husband: {husband_name}, Address: {husband_address}. "
                 f"Wife: {wife_name}, Address: {wife_address}. "
@@ -78,45 +72,46 @@ def generate_legal_doc_wordfile(request):
                 f"Marriage Date: {marriage_dt}."
             )
 
-            messages = [
-    {
-        "role": "system",
-        "content": (
-            "You are a professional legal assistant. Draft a formal divorce notice based on the user's input.\n"
-           "- Format the output as a formal legal letter.\n"
-           "- Write the letter from the Advocate’s perspective, acting on behalf of their client (the Petitioner).\n"
-           "- Begin with a 'From' section that includes the Advocate’s details (Full Name, Enrollment Number, and Address).\n"
-           "- Include a 'To' section with the Respondent’s details (Full Name and Address).\n"
-           "- Provide a clear and factual Subject stating the purpose of the letter (e.g.: 'Subject: Petition for Dissolution of Marriage').\n"
-           "- Explain the grounds for divorce and state that the Petitioner requests dissolution of marriage due to these grounds.\n"
-           "- Provide a deadline of 15 days for the recipient to respond in writing, failing which the Petitioner may pursue legal action in court.\n"
-           "- Maintain a respectful, professional, clear, and assertive legal tone and structure.\n"
-           "- Do not insert unnecessary blank lines or informal phrases; keep the letter clear, formal, and to the point.\n"
-           "- End the letter with a 'Sincerely' section that includes the Advocate’s Name, Enrollment Number, and Address.\n"
-        )
-    },
-    {
-        "role": "user",
-        "content": f"Create a divorce notice using the following details:\n{advocate_details}\n{prompt_query}"
-    }
-]
+            prompts = [
+                {
+                    "name": "divorce_notice_1.docx",
+                    "style": (
+                        "You are a legal assistant. Draft a formal and direct divorce notice.\n"
+                        "Follow strict legal structure, tone should be professional and to the point."
+                        "You are a professional legal assistant. Draft a formal divorce notice based on the user's input.\n"
+                        "- Format the output as a formal legal letter.\n"
+                        "- Write the letter from the Advocate’s perspective, acting on behalf of their client (the Petitioner).\n"
+                        "- Begin with a 'From' section that includes the Advocate’s details (Full Name, Enrollment Number, and Address).\n"
+                        "- Include a 'To' section with the Respondent’s details (Full Name and Address).\n"
+                        "- Provide a clear and factual Subject stating the purpose of the letter (e.g.: 'Subject: Petition for Dissolution of Marriage').\n"
+                        "- Explain the grounds for divorce and state that the Petitioner requests dissolution of marriage due to these grounds.\n"
+                        "- Provide a deadline of 15 days for the recipient to respond in writing, failing which the Petitioner may pursue legal action in court.\n"
+                        "- Maintain a respectful, professional, clear, and assertive legal tone and structure.\n"
+                        "- Do not insert unnecessary blank lines or informal phrases; keep the letter clear, formal, and to the point.\n"
+                        "- End the letter with a 'Sincerely' section that includes the Advocate’s Name, Enrollment Number, and Address."
+                    )
+                },
+                {
+                    "name": "divorce_notice_2.docx",
+                    "style": (
+                        "You are a legal assistant. Draft a narrative, diplomatic divorce notice.\n"
+                        "Tone should be respectful and empathetic, while maintaining legal clarity."
+                        "You are a professional legal assistant. Draft a formal divorce notice based on the user's input.\n"
+                        "- Format the output as a formal legal letter.\n"
+                        "- Write the letter from the Advocate’s perspective, acting on behalf of their client (the Petitioner).\n"
+                        "- Begin with a 'From' section that includes the Advocate’s details (Full Name, Enrollment Number, and Address).\n"
+                        "- Include a 'To' section with the Respondent’s details (Full Name and Address).\n"
+                        "- Provide a clear and factual Subject stating the purpose of the letter (e.g.: 'Subject: Petition for Dissolution of Marriage').\n"
+                        "- Explain the grounds for divorce and state that the Petitioner requests dissolution of marriage due to these grounds.\n"
+                        "- Provide a deadline of 15 days for the recipient to respond in writing, failing which the Petitioner may pursue legal action in court.\n"
+                        "- Maintain a respectful, professional, clear, and assertive legal tone and structure.\n"
+                        "- Do not insert unnecessary blank lines or informal phrases; keep the letter clear, formal, and to the point.\n"
+                        "- End the letter with a 'Sincerely' section that includes the Advocate’s Name, Enrollment Number, and Address."
+                    )
+                }
+            ]
 
-
-            # Get response from Groq
-            completion = groq_client.chat.completions.create(
-                model='llama3-70b-8192',
-                messages=messages
-            )
-
-            document = completion.choices[0].message.content
-
-            # Generate Word file
-            file_name = "generated_report.docx"
-            generate_wordpad(file_name, document)
-
-            # Save to database
-            advocate = Advocate.objects.get(user=request.user)
-
+            # Create client record
             client = Client.objects.create(
                 client_name=wife_name if who_is_filing.lower() == "wife" else husband_name,
                 filer=who_is_filing,
@@ -129,10 +124,42 @@ def generate_legal_doc_wordfile(request):
                 advocate=advocate
             )
 
-            with open(file_name, "rb") as f:
-                client.document.save(file_name, File(f))
+            file_urls = []
 
-            return FileResponse(open(file_name, "rb"), as_attachment=True, filename=file_name)
+            for index, prompt in enumerate(prompts):
+                messages = [
+                    {"role": "system", "content": prompt["style"]},
+                    {"role": "user", "content": f"{advocate_details}\n{prompt_query}"}
+                ]
+
+                completion = groq_client.chat.completions.create(
+                    model='llama3-70b-8192',
+                    messages=messages
+                )
+
+                content = completion.choices[0].message.content
+
+                with tempfile.NamedTemporaryFile(delete=False, suffix=".docx") as tmp:
+                    tmp_path = tmp.name
+
+                generate_wordpad(tmp_path, content)
+
+                # Save to FileField
+                with open(tmp_path, "rb") as f:
+                    if index == 0:
+                        client.document_version_1.save(prompt["name"], File(f))
+                        file_urls.append(client.document_version_1.url)
+                    else:
+                        client.document_version_2.save(prompt["name"], File(f))
+                        file_urls.append(client.document_version_2.url)
+
+                os.remove(tmp_path)
+
+            return JsonResponse({
+                "status": "success",
+                "document1": file_urls[0],
+                "document2": file_urls[1]
+            })
 
         except Exception as e:
             import traceback
@@ -140,7 +167,6 @@ def generate_legal_doc_wordfile(request):
             return HttpResponse(f"Error: {str(e)}", status=500)
 
     return JsonResponse({"error": "POST request required"}, status=405)
-
 
 
 # Load Session History

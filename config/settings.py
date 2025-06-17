@@ -118,10 +118,10 @@ USE_TZ = True
 STATIC_URL = 'static/'
 
 # If you have static files in your app directory
-STATICFILES_DIRS = [
+"""STATICFILES_DIRS = [
     BASE_DIR / "legalgen" / "static"
 
-]
+]"""
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
