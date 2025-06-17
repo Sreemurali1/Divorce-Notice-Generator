@@ -341,7 +341,7 @@
                 </tr>
               </thead>
               <tbody>
-                {% for client in clients %}
+                {% for client in clients reversed%}
                     <tr>
                         <td>{{ client.filer }}</td>
                         <td>{{ client.husband_name }}</td>
@@ -386,7 +386,7 @@
       { key: "husband_address", text: "What is the husband's address?" },
       { key: "wife_name", text: "What is the wife's full name?" },
       { key: "wife_address", text: "What is the wife's address?" },
-      { key: "marriage_date", text: "What is the date of marriage? (YYYY-MM-DD)" },
+      { key: "marriage_date", text: "What is the date of marriage? (DD-MM-YYYY)" },
       { key: "marriage_place", text: "Where was the marriage held?" },
       { key: "reason", text: "Mention the grounds for divorce (e.g., abuse, dowry demand, etc.):" }
     ];
