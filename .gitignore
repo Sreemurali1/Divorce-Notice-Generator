@@ -1,6 +1,10 @@
 .env
-venv
-.vscode
-.idea
-.media
+.venv
+.idea/
+.vscode/
+db.sqlite3
+media/documents/
+__pycache__/
+*.pyc
+
 
