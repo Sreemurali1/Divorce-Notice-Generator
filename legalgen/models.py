@@ -68,3 +68,66 @@ class NDA_Details(models.Model):
     def __str__(self):
         return f'NDA between {self.disclosing_party_name} and {self.receiving_party_name}'
 
+class SaleDeed(models.Model):
+    advocate = models.ForeignKey('Advocate', on_delete=models.CASCADE, related_name="sale_deeds", null=True, blank=True)
+    client_name = models.CharField(max_length=255, null=True, blank=True)
+
+    seller_name = models.CharField(max_length=255, null=True, blank=True)
+    seller_address = models.TextField(null=True, blank=True)
+    buyer_name = models.CharField(max_length=255, null=True, blank=True)
+    buyer_address = models.TextField(null=True, blank=True)
+    property_address = models.TextField(null=True, blank=True)
+    property_type = models.CharField(
+        max_length=100,
+        choices=[('Residential', 'Residential'), ('Commercial', 'Commercial')],
+        null=True, blank=True
+    )
+    property_description = models.TextField(null=True, blank=True)
+    sale_amount = models.DecimalField(max_digits=15, decimal_places=2, null=True, blank=True)
+    payment_mode = models.CharField(
+        max_length=100,
+        choices=[('Cheque', 'Cheque'), ('Bank Transfer', 'Bank Transfer'), ('Cash', 'Cash')],
+        null=True, blank=True
+    )
+    date_of_agreement = models.DateField(null=True, blank=True)
+    date_of_registration = models.DateField(null=True, blank=True)
+    witness_1 = models.CharField(max_length=255, null=True, blank=True)
+    witness_2 = models.CharField(max_length=255, null=True, blank=True)
+
+    document_version_1 = models.FileField(upload_to="sale_deed_docs/", blank=True, null=True)
+    document_version_2 = models.FileField(upload_to="sale_deed_docs/", blank=True, null=True)
+
+    created_at = models.DateTimeField(null=True, blank=True)
+
+    def __str__(self):
+        return f'Sale Deed - {self.property_address or "N/A"}'
+
+class NoObjectionCertificate(models.Model):
+    advocate = models.ForeignKey('Advocate', on_delete=models.CASCADE, related_name="nocs", null=True, blank=True)
+    client_name = models.CharField(max_length=255, null=True, blank=True)
+
+    noc_type = models.CharField(
+        max_length=100,
+        choices=[
+            ('Property Transfer', 'Property Transfer'),
+            ('Employment', 'Employment'),
+            ('Passport', 'Passport'),
+            ('Vehicle Sale', 'Vehicle Sale'),
+            ('General', 'General')
+        ],
+        null=True, blank=True
+    )
+    party_issuing = models.CharField(max_length=255, null=True, blank=True)
+    party_receiving = models.CharField(max_length=255, null=True, blank=True)
+    purpose = models.TextField(null=True, blank=True)
+    date_issued = models.DateField(null=True, blank=True)
+    valid_until = models.DateField(null=True, blank=True)
+    remarks = models.TextField(null=True, blank=True)
+
+    document_version_1 = models.FileField(upload_to="noc_docs/", blank=True, null=True)
+    document_version_2 = models.FileField(upload_to="noc_docs/", blank=True, null=True)
+
+    created_at = models.DateTimeField(null=True, blank=True)
+
+    def __str__(self):
+        return f'NOC: {self.noc_type or "N/A"} by {self.party_issuing or "Unknown"}'

@@ -112,3 +112,85 @@ prompt_divorce = [
                     )
                 }
             ]
+
+prompt_sale_deed = [
+    {
+        "name": "sale_deed_1.docx",
+        "style": (
+            "You are a legal assistant tasked with drafting a comprehensive Sale Deed Agreement for property transfer, suitable for legal registration in [Jurisdiction].\n"
+            "Incorporate the following details collected from user inputs:\n"
+            "- Seller's full name, address, and contact details.\n"
+            "- Buyer's full name, address, and contact details.\n"
+            "- Detailed property description (e.g., address, dimensions, survey number, boundaries).\n"
+            "- Sale consideration (amount, payment method, and schedule, including advance and balance payments).\n"
+            "- Date and place of execution.\n"
+            "- Details of two witnesses (names and addresses).\n"
+            "Include standard legal clauses such as:\n"
+            "- Representation of clear title and authority to sell.\n"
+            "- Indemnity clause protecting the buyer against future claims.\n"
+            "- Possession and encumbrance details.\n"
+            "- Governing law and dispute resolution mechanism (e.g., arbitration or court in [Jurisdiction]).\n"
+            "Use formal legal language, ensuring the document is structured with numbered clauses, proper headings, and is suitable for registration with the relevant authority.\n"
+            "Insert placeholders for dynamic data (e.g., [Seller_Name], [Property_Address]) to be replaced with user-provided values."
+        )
+    },
+    {
+        "name": "sale_deed_2.docx",
+        "style": (
+            "You are a legal assistant tasked with drafting a summarized but legally binding Sale Deed Agreement for client review, based on the comprehensive version.\n"
+            "Incorporate the following details collected from user inputs:\n"
+            "- Seller's full name and address.\n"
+            "- Buyer's full name and address.\n"
+            "- Brief property description (e.g., address, survey number).\n"
+            "- Total sale consideration and payment terms.\n"
+            "- Date of execution.\n"
+            "- Witness names.\n"
+            "Retain essential legal clauses, including:\n"
+            "- Confirmation of clear title.\n"
+            "- Transfer of ownership and possession.\n"
+            "- Governing law in [Jurisdiction].\n"
+            "Use a formal yet concise tone, avoiding excessive legal jargon for client readability, while ensuring the document remains legally enforceable.\n"
+            "Insert placeholders for dynamic data (e.g., [Seller_Name], [Property_Address]) to be replaced with user-provided values."
+        )
+    }
+]
+
+prompt_noc = [
+    {
+        "name": "noc_1.docx",
+        "style": (
+            "You are a legal assistant tasked with drafting a formal No Objection Certificate (NOC) for [Purpose, e.g., property transfer, loan clearance, or employment].\n"
+            "Incorporate the following details collected from user inputs:\n"
+            "- Issuing party's full name, address, and designation (if applicable).\n"
+            "- Receiving party's full name and address.\n"
+            "- Specific purpose of the NOC (e.g., property sale, vehicle transfer).\n"
+            "- Date of issue and validity period (e.g., 30 days, 6 months).\n"
+            "- Relevant remarks or conditions (e.g., no pending dues, no legal disputes).\n"
+            "- Reference to any associated documents (e.g., property deed, loan agreement number).\n"
+            "Include standard legal elements such as:\n"
+            "- A declaration of no objection with clear intent.\n"
+            "- Attestation clause for signature by the issuing party.\n"
+            "- Governing law in [Jurisdiction], if applicable.\n"
+            "Use formal legal language, ensuring the document is structured with clear headings and is suitable for official use.\n"
+            "Insert placeholders for dynamic data (e.g., [Issuing_Party_Name], [Purpose]) to be replaced with user-provided values."
+        )
+    },
+    {
+        "name": "noc_2.docx",
+        "style": (
+            "You are a legal assistant tasked with drafting a concise No Objection Certificate (NOC) for client review, based on the formal version.\n"
+            "Incorporate the following details collected from user inputs:\n"
+            "- Issuing party's full name and address.\n"
+            "- Receiving party's full name and address.\n"
+            "- Purpose of the NOC.\n"
+            "- Date of issue and validity period.\n"
+            "- Key remarks or conditions.\n"
+            "Retain essential legal elements, including:\n"
+            "- Clear statement of no objection.\n"
+            "- Signature placeholder for the issuing party.\n"
+            "Use a professional and concise tone, minimizing legal jargon for client readability while ensuring the document remains legally clear and valid.\n"
+            "Insert placeholders for dynamic data (e.g., [Issuing_Party_Name], [Purpose]) to be replaced with user-provided values."
+        )
+    }
+]
+

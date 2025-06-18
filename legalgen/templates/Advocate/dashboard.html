@@ -6,7 +6,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Advocate Dashboard</title>
   <link rel="stylesheet" href="{% static 'css/styles.css' %}">
-
 </head>
 <body>
   <!-- Sidebar Navigation -->
@@ -42,21 +41,21 @@
           <option value="">-- Choose Document --</option>
           <option value="divorce">Divorce Notice</option>
           <option value="nda">Non-Disclosure Agreement</option>
+          <option value="sale_deed">Sale Deed</option>
+          <option value="noc">No Objection Certificate</option>
         </select>
         <div id="chat-box" class="chatbox"></div>
         <form id="chat-form" class="chat-form">
           {% csrf_token %}
           <input id="query" name="query" type="text" placeholder="Type your response…" required autocomplete="off" />
           <button type="submit">Send</button>
-
         </form>
         <div id="link-section"></div>
-
       </section>
 
       <!-- Client History Sections -->
       <div class="client-history-wrapper">
-        <!-- Divorce Client History -->
+        <!-- Divorce Client History --> 
         <section class="client-history">
           <h2>Divorce Clients</h2>
           {% if clients %}
@@ -73,7 +72,7 @@
                 </tr>
               </thead>
               <tbody>
-                {% for client in clients %}
+                {% for client in clients reversed %}
                 <tr>
                   <td>{{ client.filer }}</td>
                   <td>{{ client.husband_name }}</td>
@@ -112,7 +111,7 @@
                 <tr>
                   <td>{{ nda.disclosing_party_name }}</td>
                   <td>{{ nda.receiving_party_name }}</td>
-                  <td>{{ nda.effective_date }}</td>
+                  <td>{{ nda.effective_date|date:"d-m-Y" }}</td>
                   <td>{{ nda.duration }} year(s)</td>
                   <td>{% if nda.document_version_1 %}<a href="{{ nda.document_version_1.url }}">Download</a>{% else %}—{% endif %}</td>
                   <td>{% if nda.document_version_2 %}<a href="{{ nda.document_version_2.url }}">Download</a>{% else %}—{% endif %}</td>
@@ -123,6 +122,76 @@
           </div>
           {% else %}
           <p>No NDA records found.</p>
+          {% endif %}
+        </section>
+
+        <!-- Sale Deed Client History -->
+        <section class="client-history">
+          <h2>Sale Deed Records</h2>
+          {% if sale_deeds %}
+          <div class="table-wrapper">
+            <table class="client-table">
+              <thead>
+                <tr>
+                  <th>Seller Name</th>
+                  <th>Buyer Name</th>
+                  <th>Property Address</th>
+                  <th>Sale Amount</th>
+                  <th>Document 1</th>
+                  <th>Document 2</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for sale_deed in sale_deeds %}
+                <tr>
+                  <td>{{ sale_deed.seller_name }}</td>
+                  <td>{{ sale_deed.buyer_name }}</td>
+                  <td>{{ sale_deed.property_address }}</td>
+                  <td>₹{{ sale_deed.sale_amount }}</td>
+                  <td>{% if sale_deed.document_version_1 %}<a href="{{ sale_deed.document_version_1.url }}">Download</a>{% else %}—{% endif %}</td>
+                  <td>{% if sale_deed.document_version_2 %}<a href="{{ sale_deed.document_version_2.url }}">Download</a>{% else %}—{% endif %}</td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+          {% else %}
+          <p>No Sale Deed records found.</p>
+          {% endif %}
+        </section>
+
+        <!-- NOC Client History -->
+        <section class="client-history">
+          <h2>No Objection Certificates</h2>
+          {% if nocs %}
+          <div class="table-wrapper">
+            <table class="client-table">
+              <thead>
+                <tr>
+                  <th>NOC Type</th>
+                  <th>Issuing Party</th>
+                  <th>Receiving Party</th>
+                  <th>Issue Date</th>
+                  <th>Document 1</th>
+                  <th>Document 2</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for noc in nocs %}
+                <tr>
+                  <td>{{ noc.noc_type }}</td>
+                  <td>{{ noc.party_issuing }}</td>
+                  <td>{{ noc.party_receiving }}</td>
+                  <td>{{ noc.date_issued|date:"d-m-Y" }}</td>
+                  <td>{% if noc.document_version_1 %}<a href="{{ noc.document_version_1.url }}">Download</a>{% else %}—{% endif %}</td>
+                  <td>{% if noc.document_version_2 %}<a href="{{ noc.document_version_2.url }}">Download</a>{% else %}—{% endif %}</td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+          {% else %}
+          <p>No NOC records found.</p>
           {% endif %}
         </section>
       </div>

@@ -13,10 +13,10 @@ from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.decorators import login_required
 from django.core.files import File
 
-from .models import Advocate, Client, NDA_Details
+from .models import Advocate, Client, NDA_Details, SaleDeed, NoObjectionCertificate
 from .forms import SignupForm
 from .generated_word import generate_wordpad
-from .prompts import prompt_NDA, prompt_divorce
+from .prompts import prompt_NDA, prompt_divorce, prompt_sale_deed, prompt_noc
 
 from groq import Groq
 from dotenv import load_dotenv
@@ -179,6 +179,97 @@ def generate_legal_doc_wordfile(request):
             ]
             prompt_template = prompt_NDA
 
+            # ==== Sale Deed ====
+        elif document_type == "sale_deed":
+            required_fields = [
+                "client_name", "seller_name", "seller_address", "buyer_name",
+                "buyer_address", "property_address", "property_type", "property_description",
+                "sale_amount", "payment_mode", "date_of_agreement", "date_of_registration",
+                "witness_1", "witness_2"
+            ]
+            for field in required_fields:
+                if not request.POST.get(field):
+                    return JsonResponse({"error": f"Missing required field: {field}"}, status=400)
+
+            sale_deed_fields = {
+                "advocate": advocate,
+                "client_name": request.POST.get("client_name"),
+                "seller_name": request.POST.get("seller_name"),
+                "seller_address": request.POST.get("seller_address"),
+                "buyer_name": request.POST.get("buyer_name"),
+                "buyer_address": request.POST.get("buyer_address"),
+                "property_address": request.POST.get("property_address"),
+                "property_type": request.POST.get("property_type"),
+                "property_description": request.POST.get("property_description"),
+                "sale_amount": request.POST.get("sale_amount"),
+                "payment_mode": request.POST.get("payment_mode"),
+                "date_of_agreement": datetime.strptime(request.POST.get("date_of_agreement"), "%d-%m-%Y"),
+                "date_of_registration": datetime.strptime(request.POST.get("date_of_registration"), "%d-%m-%Y"),
+                "witness_1": request.POST.get("witness_1"),
+                "witness_2": request.POST.get("witness_2"),
+                
+            }
+
+            related_instance = SaleDeed.objects.create(**sale_deed_fields)
+
+            prompt_query = (
+                f"Prepare a Sale Deed Agreement.\n"
+                f"Seller: {sale_deed_fields['seller_name']}, Address: {sale_deed_fields['seller_address']}.\n"
+                f"Buyer: {sale_deed_fields['buyer_name']}, Address: {sale_deed_fields['buyer_address']}.\n"
+                f"Property Address: {sale_deed_fields['property_address']} ({sale_deed_fields['property_type']})\n"
+                f"Description: {sale_deed_fields['property_description']}\n"
+                f"Sale Amount: ₹{sale_deed_fields['sale_amount']}, Payment Mode: {sale_deed_fields['payment_mode']}\n"
+                f"Agreement Date: {sale_deed_fields['date_of_agreement']}, Registration Date: {sale_deed_fields['date_of_registration']}\n"
+                f"Witnesses: {sale_deed_fields['witness_1']} & {sale_deed_fields['witness_2']}"
+            )
+
+            messages = [
+                {"role": "system", "content": prompt_sale_deed[0]["style"]},
+                {"role": "user", "content": prompt_query}
+            ]
+            prompt_template = prompt_sale_deed
+
+        # ==== NOC Section ====
+        elif document_type == "noc":
+            required_fields = [
+                "client_name", "noc_type", "party_issuing", "party_receiving",
+                "purpose", "date_issued", "valid_until", "remarks"
+            ]
+            for field in required_fields:
+                if not request.POST.get(field):
+                    return JsonResponse({"error": f"Missing required field: {field}"}, status=400)
+
+            noc_fields = {
+                "advocate": advocate,
+                "client_name": request.POST.get("client_name"),
+                "noc_type": request.POST.get("noc_type"),
+                "party_issuing": request.POST.get("party_issuing"),
+                "party_receiving": request.POST.get("party_receiving"),
+                "purpose": request.POST.get("purpose"),
+                "date_issued": datetime.strptime(request.POST.get("date_issued"), "%d-%m-%Y"),
+                "valid_until": datetime.strptime(request.POST.get("valid_until"), "%d-%m-%Y"),
+                "remarks": request.POST.get("remarks"),
+            
+            }
+
+            related_instance = NoObjectionCertificate.objects.create(**noc_fields)
+
+            prompt_query = (
+                f"Draft a No Objection Certificate (NOC).\n"
+                f"NOC Type: {noc_fields['noc_type']}\n"
+                f"Issuing Party: {noc_fields['party_issuing']}\n"
+                f"Receiving Party: {noc_fields['party_receiving']}\n"
+                f"Purpose: {noc_fields['purpose']}\n"
+                f"Issue Date: {noc_fields['date_issued']}, Valid Until: {noc_fields['valid_until']}\n"
+                f"Remarks: {noc_fields['remarks']}"
+            )
+
+            messages = [
+                {"role": "system", "content": prompt_noc[0]["style"]},
+                {"role": "user", "content": prompt_query}
+            ]
+            prompt_template = prompt_noc
+
         file_urls = []
 
         for index, prompt in enumerate(prompt_template):
@@ -267,11 +358,16 @@ def advocate_dashboard_view(request):
     # Fetch related models
     clients = Client.objects.filter(advocate=advocate)
     nda_list = NDA_Details.objects.filter(advocate=advocate).order_by('-created_at')  # Optional ordering
+    noc_list = NoObjectionCertificate.objects.filter(advocate=advocate).order_by('-created_at')
+    sale_deed_list = SaleDeed.objects.filter(advocate=advocate).order_by('-created_at')
 
     return render(request, "Advocate/dashboard.html", {
         "advocate": advocate,
         "clients": clients,
         "nda_list": nda_list,
+        "noc_list": noc_list,
+        "sale_deed": sale_deed_list
+
     })
 
 
