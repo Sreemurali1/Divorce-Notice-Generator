@@ -8,8 +8,7 @@ def generate_wordpad(filename, document_content):
     # Create a new Word document
     doc = Document()
 
-    # Add title or heading
-    doc.add_heading("Legal Divorce Notice", level=1)
+    
 
     if not document_content.strip():
         doc.add_paragraph("No content provided.")

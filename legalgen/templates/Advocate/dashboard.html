@@ -1,537 +1,146 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Advocate Dashboard</title>
-  <style>
-    :root {
-      --dark-green: #075E54;
-      --light-green: #25D366;
-      --msg-user: #DCF8C6;
-      --msg-bot: #E5E5E5;
-      --bg: #edf5f0;
-      --text-dark: #000022;
-      --text-light: #fff;
-    }
+  <link rel="stylesheet" href="{% static 'css/styles.css' %}">
 
-    body {
-      font-family: Arial, sans-serif;
-      background: var(--bg);
-      margin: 0;
-      padding: 0;
-      color: var(--dark-green);
-      display: flex;
-    }
-
-    .side-nav {
-      width: 220px;
-      background: var(--dark-green);
-      color: var(--text-light);
-      padding: 30px 20px;
-      box-shadow: 0 4px 30px rgb(0 0 0 / 0.4);
-      position: sticky;
-      top: 0;
-      height: 100vh;
-      border-radius: 0 20px 20px 0;
-    }
-
-    .side-nav h2 {
-      color: var(--light-green);
-      margin-bottom: 30px;
-      font-size: 1.7rem;
-      font-weight: bold;
-      text-transform: uppercase;
-      border-bottom: 2px solid var(--light-green);
-      padding-bottom: 10px;
-    }
-
-    .side-nav h3 {
-      color: var(--light-green);
-      margin-bottom: 15px;
-      font-size: 1.3rem;
-      font-family: "Georgia", serif;
-      font-weight: bold;
-      border-bottom: 1px solid var(--light-green);
-      padding-bottom: 5px;
-    }
-
-    .side-nav ul.profile-list {
-      list-style: none;
-      padding: 20px;
-      margin-bottom: 20px;
-      background: #ffffff;
-      border-radius: 10px;
-      box-shadow: 0 2px 8px rgb(0 0 0 / 0.15);
-      color: var(--dark-green);
-      font-family: "Georgia", serif;
-      border-left: 5px solid var(--light-green);
-    }
-
-    .side-nav ul.profile-list li {
-      margin-bottom: 15px;
-      font-size: 1rem;
-      border-bottom: 1px solid #ccc;
-      padding-bottom: 8px;
-    }
-
-    .side-nav ul.profile-list li:last-child {
-      border-bottom: none;
-    }
-
-    .side-nav ul.profile-list li:hover {
-      background: #f9f9f9;
-      transition: background 0.3s ease;
-      cursor: default;
-    }
-
-    main.container {
-      flex-grow: 1;
-      padding: 20px;
-    }
-
-    main.container h1 {
-      color: var(--dark-green);
-      text-align: center;
-      margin-bottom: 20px;
-      font-size: 1.5rem;
-    }
-
-    .main-content {
-      display: flex;
-      gap: 20px;
-      padding: 20px;
-      border-left: 5px solid var(--dark-green);
-      padding-left: 20px;
-    }
-
-    .chatbot {
-      flex: 1;
-      max-width: 40%;
-      background: #fff;
-      padding: 20px;
-      border-radius: 20px;
-      box-shadow: 0 2px 5px rgb(0 0 0 / 0.5);
-    }
-
-    .client-history {
-      flex: 2;
-      background: #fff;
-      padding: 20px;
-      border-radius: 20px;
-      box-shadow: 0 2px 5px rgb(0 0 0 / 0.5);
-    }
-
-    section.chatbot h2,
-    section.client-history h2 {
-      color: var(--dark-green);
-      margin-bottom: 20px;
-      font-size: 1.4rem;
-      font-weight: bold;
-    }
-
-    #chat-box {
-      height: 400px;
-      overflow-y: auto;
-      border: none;
-      padding: 10px;
-      border-radius: 20px;
-      background: #f5f5f5;
-      margin-bottom: 20px;
-    }
-
-    .message {
-      margin-bottom: 10px;
-      padding: 10px 15px;
-      border-radius: 20px;
-      max-width: 80%;
-      word-wrap: break-word;
-      clear: both;
-      position: relative;
-      animation: fadeIn 0.5s ease-in;
-    }
-
-    .user {
-      background: var(--msg-user);
-      color: var(--text-dark);
-      float: right;
-      text-align: right;
-    }
-
-    .bot {
-      background: var(--msg-bot);
-      color: var(--text-dark);
-      float: left;
-      text-align: left;
-    }
-
-    form.chat-form {
-      display: flex;
-      gap: 10px;
-      align-items: center;
-    }
-
-    form.chat-form input[type='text'] {
-      flex: 1;
-      padding: 0.75rem;
-      font-size: 1rem;
-      border-radius: 20px;
-      border: none;
-      outline: none;
-      background: #f0f0f0;
-      color: var(--dark-green);
-      box-shadow: 0 2px 5px rgb(0 0 0 / 0.5);
-    }
-
-    form.chat-form button {
-      background: var(--dark-green);
-      color: var(--text-light);
-      border: none;
-      padding: 0.75rem 1.5rem;
-      border-radius: 20px;
-      cursor: pointer;
-      font-size: 1rem;
-      box-shadow: 0 2px 5px rgb(0 0 0 / 0.5);
-      transition: background 0.3s ease;
-    }
-
-    form.chat-form button:hover {
-      background: var(--light-green);
-      color: var(--dark-green);
-    }
-
-    .spinner {
-      border: 4px solid #f3f3f3;
-      border-top: 4px solid var(--dark-green);
-      border-radius: 50%;
-      width: 24px;
-      height: 24px;
-      animation: spin 1s linear infinite;
-      margin: 10px auto;
-    }
-
-    .table-wrapper {
-      overflow-x: auto;
-    }
-
-    .client-table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 0.95rem;
-      background: #fefefe;
-      border-radius: 12px;
-      overflow: hidden;
-      box-shadow: 0 2px 8px rgb(0 0 0 / 0.15);
-    }
-
-    .client-table th,
-    .client-table td {
-      padding: 12px 15px;
-      text-align: left;
-      border-bottom: 1px solid #ddd;
-    }
-
-    .client-table thead {
-      background-color: var(--dark-green);
-      color: var(--text-light);
-      text-transform: uppercase;
-      font-size: 0.9rem;
-    }
-
-    .client-table tbody tr:nth-child(even) {
-      background-color: #f9f9f9;
-    }
-
-    .client-table tbody tr:hover {
-      background-color: #f1f1f1;
-    }
-
-    .client-table a {
-      color: var(--dark-green);
-      text-decoration: none;
-      font-weight: bold;
-    }
-
-    .client-table a:hover {
-      text-decoration: underline;
-    }
-
-    @keyframes spin {
-      to {
-        transform: rotate(360deg);
-      }
-    }
-
-    @keyframes fadeIn {
-      from {
-        transform: translateY(20px);
-        opacity: 0;
-      }
-      to {
-        transform: translateY(0px);
-        opacity: 1;
-      }
-    }
-
-    @media (max-width: 900px) {
-      .main-content {
-        flex-direction: column;
-        border-left: none;
-        padding-left: 0;
-      }
-
-      .chatbot,
-      .client-history {
-        max-width: 100%;
-      }
-
-      form.chat-form {
-        flex-direction: column;
-        align-items: stretch;
-      }
-
-      form.chat-form input[type='text'] {
-        margin-bottom: 10px;
-      }
-    }
-  </style>
 </head>
 <body>
-
-  <nav class="side-nav">
-    <h2>Advocate Dashboard</h2>
-
-    <h3>Your Profile</h3>
-    <ul class="profile-list">
+  <!-- Sidebar Navigation -->
+  <aside class="sidebar">
+    <div class="flex justify-between items-center mb-6">
+      <h2>Advocate Dashboard</h2>
+      <button class="toggle-sidebar" id="toggle-sidebar">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+        </svg>
+      </button>
+    </div>
+    <ul>
       <li><strong>Full Name:</strong> {{ advocate.user.first_name }} {{ advocate.user.last_name }}</li>
       <li><strong>Enrollment Number:</strong> {{ advocate.enrollment_number }}</li>
       <li><strong>Email:</strong> {{ advocate.email }}</li>
       <li><strong>Mobile Number:</strong> {{ advocate.phone }}</li>
     </ul>
-  </nav>
+  </aside>
 
+  <!-- Main Content -->
   <main class="container">
-    <h1>Legal Document Dashboard</h1>
+    <header>
+      <h1>Legal Document Dashboard</h1>
+    </header>
 
     <div class="main-content">
+      <!-- Chatbot Section -->
       <section class="chatbot">
-        <h2>Chatbot</h2>
-        <section id="chat-box"><div class="bot message">Hi! I’m your legal assistant. Type /start to begin the process.</div></section>
-
+        <h2>Legal Assistant Chatbot</h2>
+        <label for="docType">Select Document Type:</label>
+        <select id="docType">
+          <option value="">-- Choose Document --</option>
+          <option value="divorce">Divorce Notice</option>
+          <option value="nda">Non-Disclosure Agreement</option>
+        </select>
+        <div id="chat-box" class="chatbox"></div>
         <form id="chat-form" class="chat-form">
           {% csrf_token %}
           <input id="query" name="query" type="text" placeholder="Type your response…" required autocomplete="off" />
-          <button>Send</button>
+          <button type="submit">Send</button>
+
         </form>
+        <div id="link-section"></div>
+
       </section>
 
-      <section class="client-history">
-        <h2>Client Data History</h2>
-        {% if clients %}
+      <!-- Client History Sections -->
+      <div class="client-history-wrapper">
+        <!-- Divorce Client History -->
+        <section class="client-history">
+          <h2>Divorce Clients</h2>
+          {% if clients %}
           <div class="table-wrapper">
             <table class="client-table">
               <thead>
                 <tr>
-                    <th>Filer</th>
-                    <th>Husband's Name</th>
-                    <th>Wife's Name</th>
-                    <th>Marriage Date</th>
-                    <th>Document 1</th>
-                    <th>Document 2</th>
+                  <th>Filer</th>
+                  <th>Husband's Name</th>
+                  <th>Wife's Name</th>
+                  <th>Marriage Date</th>
+                  <th>Document 1</th>
+                  <th>Document 2</th>
                 </tr>
               </thead>
               <tbody>
-                {% for client in clients reversed%}
-                    <tr>
-                        <td>{{ client.filer }}</td>
-                        <td>{{ client.husband_name }}</td>
-                        <td>{{ client.wife_name }}</td>
-                        <td>{{ client.marriage_Date|date:"d-m-Y" }}</td>
-                        <td>
-                           {% if client.document_version_1 %}
-                             <a href="{{ client.document_version_1.url }}">Download 1</a>
-                           {% else %} — {% endif %}
-                        </td>
-                        <td>
-                           {% if client.document_version_2 %}
-                             <a href="{{ client.document_version_2.url }}">Download 2</a>
-                           {% else %} — {% endif %}
-                        </td>
-                    </tr>
+                {% for client in clients %}
+                <tr>
+                  <td>{{ client.filer }}</td>
+                  <td>{{ client.husband_name }}</td>
+                  <td>{{ client.wife_name }}</td>
+                  <td>{{ client.marriage_Date|date:"d-m-Y" }}</td>
+                  <td>{% if client.document_version_1 %}<a href="{{ client.document_version_1.url }}">Download</a>{% else %}—{% endif %}</td>
+                  <td>{% if client.document_version_2 %}<a href="{{ client.document_version_2.url }}">Download</a>{% else %}—{% endif %}</td>
+                </tr>
                 {% endfor %}
               </tbody>
             </table>
           </div>
-        {% else %}
+          {% else %}
           <p>No clients found.</p>
-        {% endif %}
-      </section>
+          {% endif %}
+        </section>
+
+        <!-- NDA Client History -->
+        <section class="client-history">
+          <h2>NDA Clients</h2>
+          {% if nda_list %}
+          <div class="table-wrapper">
+            <table class="client-table">
+              <thead>
+                <tr>
+                  <th>Disclosing Party</th>
+                  <th>Receiving Party</th>
+                  <th>Effective Date</th>
+                  <th>Duration</th>
+                  <th>Document 1</th>
+                  <th>Document 2</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for nda in nda_list %}
+                <tr>
+                  <td>{{ nda.disclosing_party_name }}</td>
+                  <td>{{ nda.receiving_party_name }}</td>
+                  <td>{{ nda.effective_date }}</td>
+                  <td>{{ nda.duration }} year(s)</td>
+                  <td>{% if nda.document_version_1 %}<a href="{{ nda.document_version_1.url }}">Download</a>{% else %}—{% endif %}</td>
+                  <td>{% if nda.document_version_2 %}<a href="{{ nda.document_version_2.url }}">Download</a>{% else %}—{% endif %}</td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+          {% else %}
+          <p>No NDA records found.</p>
+          {% endif %}
+        </section>
+      </div>
     </div>
   </main>
 
+  <!-- JavaScript for Sidebar Toggle -->
   <script>
-    const chatBox = document.getElementById("chat-box");
+    const toggleSidebar = document.getElementById('toggle-sidebar');
+    const sidebar = document.querySelector('.sidebar');
+    const container = document.querySelector('.container');
 
-    const input = document.getElementById("query");
-
-    const csrfToken = document.querySelector("[name=csrfmiddlewaretoken]").value;
-
-    let currentQuestionIndex = 0;
-
-    let userResponses = {};
-
-    const questions = [
-      { key: "who_is_filing", text: "Who is filing the divorce notice? (Husband/Wife)" },
-      { key: "husband_name", text: "What is the husband's full name?" },
-      { key: "husband_address", text: "What is the husband's address?" },
-      { key: "wife_name", text: "What is the wife's full name?" },
-      { key: "wife_address", text: "What is the wife's address?" },
-      { key: "marriage_date", text: "What is the date of marriage? (DD-MM-YYYY)" },
-      { key: "marriage_place", text: "Where was the marriage held?" },
-      { key: "reason", text: "Mention the grounds for divorce (e.g., abuse, dowry demand, etc.):" }
-    ];
-
-    function appendMessage(text, sender) {
-      const msg = document.createElement("div");
-
-      msg.className = `message ${sender}`;
-
-      msg.textContent = text;
-
-      chatBox.appendChild(msg);
-      chatBox.scrollTop = chatBox.scrollHeight;
-    }
-
-    function showSpinner() {
-      const spinner = document.createElement("div");
-
-      spinner.className = "spinner";
-
-      spinner.id = "spinner";
-
-      chatBox.appendChild(spinner);
-
-      const generatingMsg = document.createElement("div");
-
-      generatingMsg.className = "bot message";
-
-      generatingMsg.id = "generatedMsg";
-
-      generatingMsg.textContent = "Generating document, please wait...";
-
-      chatBox.appendChild(generatingMsg);
-
-      chatBox.scrollTop = chatBox.scrollHeight;
-    }
-
-    function removeSpinner() {
-      document.getElementById("spinner")?.remove();
-
-      document.getElementById("generatedMsg")?.remove();
-    }
-
-    async function askNextQuestion() {
-      if (currentQuestionIndex < questions.length) {
-        appendMessage(questions[currentQuestionIndex].text, "bot");
-
-      } else {
-        await generateLegalNotice();
-      }
-    }
-
-    async function generateLegalNotice() {
-      showSpinner();
-
-      const data = new URLSearchParams();
-
-      for (const key in userResponses) {
-        data.append(key, userResponses[key]);
-      }
-
-      try {
-        const response = await fetch("/generate_legal_doc_wordfile/", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/x-www-form-urlencoded",
-            "X-CSRFToken": csrfToken
-          },
-          body: data
-        });
-
-        removeSpinner();
-
-        if (!response.ok) throw new Error(await response.text());
-
-        // The API should respond with two document URLs
-        const result = await response.json();
-
-        // create first link
-        const a1 = document.createElement("a");
-
-        a1.href = result.document1;
-        a1.download = "divorce_notice_1.docx";
-        a1.textContent = "Download Divorce Notice 1 📁";
-
-        a1.className = "bot message";
-
-        chatBox.appendChild(a1);
-
-        // create δεύτε link
-        const a2 = document.createElement("a");
-
-        a2.href = result.document2;
-        a2.download = "divorce_notice_2.docx";
-        a2.textContent = "Download Divorce Notice 2 📁";
-
-        a2.className = "bot message";
-
-        chatBox.appendChild(a2);
-
-        chatBox.scrollTop = chatBox.scrollHeight;
-
-      } catch (error) {
-        console.error(error);
-        removeSpinner();
-        appendMessage("Sorry, an error occurred while generating the notices.", "bot");
-
-      }
-    }
-
-    function resetChat() {
-      chatBox.innerHTML = "<div class='bot message'>Hi! I’m your legal assistant. Type /start to begin the process.</div>";
-      currentQuestionIndex = 0;
-      userResponses = {};
-    }
-
-    document.getElementById("chat-form").addEventListener("submit", (event) => {
-      event.preventDefault();
-
-      const userMessage = input.value.trim();
-
-      if (!userMessage) return;
-
-      appendMessage(userMessage, "user");
-
-      if (userMessage.toLowerCase() === "/start") {
-        resetChat();
-        input.value = "";
-        setTimeout(askNextQuestion, 500);
-        return;
-      }
-
-      const currentKey = questions[currentQuestionIndex]?.key;
-
-      if (currentKey) {
-        userResponses[currentKey] = userMessage;
-      }
-
-      input.value = "";
-      currentQuestionIndex++;
-      setTimeout(askNextQuestion, 500);
+    toggleSidebar.addEventListener('click', () => {
+      sidebar.classList.toggle('sidebar-active');
+      container.classList.toggle('sidebar-active');
     });
-
-
   </script>
-
+  <!-- External chatbot logic -->
+  <script src="{% static 'js/chatbot.js' %}"></script>
 </body>
 </html>
