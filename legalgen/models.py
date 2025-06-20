@@ -2,6 +2,7 @@
 
 from django.contrib.auth.models import User
 from django.db import models
+import uuid
 
 class Advocate(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
@@ -131,3 +132,24 @@ class NoObjectionCertificate(models.Model):
 
     def __str__(self):
         return f'NOC: {self.noc_type or "N/A"} by {self.party_issuing or "Unknown"}'
+
+
+class LegalSession(models.Model):
+    advocate = models.ForeignKey('Advocate', on_delete=models.CASCADE, related_name="draft", null=True, blank=True)
+    session_id = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
+    filename = models.CharField(max_length=255)
+    original_text = models.TextField()
+    questions = models.JSONField(default=list)
+    answers = models.JSONField(default=dict)
+    current_question = models.CharField(max_length=500, blank=True, null=True)
+    status = models.CharField(max_length=50, default="in_progress")
+    filled_text = models.TextField(blank=True, null=True)
+    generated_pdf_path = models.CharField(max_length=255, blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    
+    document = models.FileField(upload_to="draft_gener/", blank=True, null=True)
+
+    def __str__(self):
+        return f"Session {self.session_id} ({self.status})"
+
+

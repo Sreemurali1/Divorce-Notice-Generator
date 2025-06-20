@@ -1,6 +1,9 @@
+from .example import example_notice
+
+
 prompt_NDA = [
     {
-        "name": "nda_agreement_1.docx",
+        "name": "nda_agreement_1.pdf",
         "style": (
             "You are a legal assistant. Draft a professional and enforceable Non-Disclosure Agreement (NDA) using the structured legal format below."
 
@@ -40,7 +43,7 @@ prompt_NDA = [
         )
     },
     {
-        "name": "nda_agreement_2.docx",
+        "name": "nda_agreement_2.pdf",
         "style": (
             "Draft a highly professional Non-Disclosure Agreement (NDA) based on the provided party and agreement details."
 
@@ -69,53 +72,67 @@ prompt_NDA = [
             "Avoid stating 'None' or 'This does not apply'. Simply omit irrelevant clauses."
 
             "Ensure the document is legally coherent, professional, and tailored to the inputs given."
+
+            
+        )
+    }
+]
+
+prompt_divorce = [
+    {
+        "name": "divorce_notice_1.pdf",
+        "style": (
+            "You are a legal assistant. Draft a formal and direct divorce notice.\n"
+            "Tone: Professional, factual, and to the point.\n\n"
+
+            "## Instructions:\n"
+            "- Write the letter from the Advocate’s perspective, acting on behalf of the Petitioner (client).\n"
+            "- Begin with a  Advocate’s details((not add *From* word)).\n"
+            "- Include a **To** section with the Respondent’s Full Name and Address.\n"
+            "- Include a **Subject** line: *Subject: Petition for Dissolution of Marriage*.\n"
+            "- Clearly explain the grounds for divorce and explain in summary and request dissolution of marriage on those grounds.\n"
+            "- Mention a 15-day deadline for the Respondent to reply in writing.\n"
+            "- Warn that failure to respond may result in legal proceedings in court.\n"
+            "- Maintain a professional, respectful, and assertive tone.\n"
+            "- Do not include informal language or excessive blank lines.\n"
+            "- Conclude with a **Sincerely** section: Advocate’s Name,Address."
+            "- Add bold letters to *To* word only,Points where needed"
+            "- Dont Mention *Address* Word but write address details  in the notice"
+            "- Generate atleast 4 to 5 line for one paragraph and like wise"
+            f"Example: {example_notice}"
+        )
+    },
+    {
+        "name": "divorce_notice_2.pdf",
+        "style": (
+            "You are a legal assistant. Draft a narrative and diplomatic divorce notice.\n"
+            "Tone: Respectful and empathetic, while maintaining legal clarity.\n\n"
+
+            "## Instructions:\n"
+            "- Write the letter from the Advocate’s perspective, acting on behalf of the Petitioner (client).\n"
+            "- Begin with a the Advocate’s details(not add *From* word).\n"
+            "- Include a **To** section with the Respondent’s Full Name and Address.\n"
+            "- Include a **Subject** line: *Subject: Petition for Dissolution of Marriage*.\n"
+            "- Provide a respectful and clear explanation of the grounds for divorce.\n"
+            "- State the Petitioner’s intent to dissolve the marriage due to irreconcilable issues.\n"
+            "- Provide a 15-day deadline for the Respondent’s reply in writing.\n"
+            "- Inform that failure to respond may lead to legal action.\n"
+
+            "- Use a clear, empathetic, and professional tone.\n"
+            "- Avoid excessive blank lines or overly legalistic language.\n"
+            "- End with a **Sincerely** section: Advocate’s Name, Address."
+            "- Add bold letters to *To* word only,Points where needed"
+            "- Dont Mention *Address* Word but write address details  in the notice"
+            "- Generate atleast 4 to 5 line for one paragraph and like wise"
+            f"Example: {example_notice}"
         )
     }
 ]
 
 
-prompt_divorce = [
-                {
-                    "name": "divorce_notice_1.docx",
-                    "style": (
-                        "You are a legal assistant. Draft a formal and direct divorce notice.\n"
-                        "Follow strict legal structure, tone should be professional and to the point."
-                        "You are a professional legal assistant. Draft a formal divorce notice based on the user's input.\n"
-                        "- Format the output as a formal legal letter.\n"
-                        "- Write the letter from the Advocate’s perspective, acting on behalf of their client (the Petitioner).\n"
-                        "- Begin with a 'From' section that includes the Advocate’s details (Full Name, Enrollment Number, and Address).\n"
-                        "- Include a 'To' section with the Respondent’s details (Full Name and Address).\n"
-                        "- Provide a clear and factual Subject stating the purpose of the letter (e.g.: 'Subject: Petition for Dissolution of Marriage').\n"
-                        "- Explain the grounds for divorce and state that the Petitioner requests dissolution of marriage due to these grounds.\n"
-                        "- Provide a deadline of 15 days for the recipient to respond in writing, failing which the Petitioner may pursue legal action in court.\n"
-                        "- Maintain a respectful, professional, clear, and assertive legal tone and structure.\n"
-                        "- Do not insert unnecessary blank lines or informal phrases; keep the letter clear, formal, and to the point.\n"
-                        "- End the letter with a 'Sincerely' section that includes the Advocate’s Name, Enrollment Number, and Address."
-                    )
-                },
-                {
-                    "name": "divorce_notice_2.docx",
-                    "style": (
-                        "You are a legal assistant. Draft a narrative, diplomatic divorce notice.\n"
-                        "Tone should be respectful and empathetic, while maintaining legal clarity."
-                        "You are a professional legal assistant. Draft a formal divorce notice based on the user's input.\n"
-                        "- Format the output as a formal legal letter.\n"
-                        "- Write the letter from the Advocate’s perspective, acting on behalf of their client (the Petitioner).\n"
-                        "- Begin with a 'From' section that includes the Advocate’s details (Full Name, Enrollment Number, and Address).\n"
-                        "- Include a 'To' section with the Respondent’s details (Full Name and Address).\n"
-                        "- Provide a clear and factual Subject stating the purpose of the letter (e.g.: 'Subject: Petition for Dissolution of Marriage').\n"
-                        "- Explain the grounds for divorce and state that the Petitioner requests dissolution of marriage due to these grounds.\n"
-                        "- Provide a deadline of 15 days for the recipient to respond in writing, failing which the Petitioner may pursue legal action in court.\n"
-                        "- Maintain a respectful, professional, clear, and assertive legal tone and structure.\n"
-                        "- Do not insert unnecessary blank lines or informal phrases; keep the letter clear, formal, and to the point.\n"
-                        "- End the letter with a 'Sincerely' section that includes the Advocate’s Name, Enrollment Number, and Address."
-                    )
-                }
-            ]
-
 prompt_sale_deed = [
     {
-        "name": "sale_deed_1.docx",
+        "name": "sale_deed_1.pdf",
         "style": (
             "You are a legal assistant tasked with drafting a comprehensive Sale Deed Agreement for property transfer, suitable for legal registration in [Jurisdiction].\n"
             "Incorporate the following details collected from user inputs:\n"
@@ -135,7 +152,7 @@ prompt_sale_deed = [
         )
     },
     {
-        "name": "sale_deed_2.docx",
+        "name": "sale_deed_2.pdf",
         "style": (
             "You are a legal assistant tasked with drafting a summarized but legally binding Sale Deed Agreement for client review, based on the comprehensive version.\n"
             "Incorporate the following details collected from user inputs:\n"
@@ -157,7 +174,7 @@ prompt_sale_deed = [
 
 prompt_noc = [
     {
-        "name": "noc_1.docx",
+        "name": "noc_1.pdf",
         "style": (
             "You are a legal assistant tasked with drafting a formal No Objection Certificate (NOC) for [Purpose, e.g., property transfer, loan clearance, or employment].\n"
             "Incorporate the following details collected from user inputs:\n"
@@ -176,7 +193,7 @@ prompt_noc = [
         )
     },
     {
-        "name": "noc_2.docx",
+        "name": "noc_2.pdf",
         "style": (
             "You are a legal assistant tasked with drafting a concise No Objection Certificate (NOC) for client review, based on the formal version.\n"
             "Incorporate the following details collected from user inputs:\n"

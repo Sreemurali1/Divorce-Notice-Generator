@@ -2,81 +2,177 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Login</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Advocate Login</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
+    /* Reset and Base Styles */
     * {
+      margin: 0;
+      padding: 0;
       box-sizing: border-box;
-      font-family: 'Segoe UI', sans-serif;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     }
 
     body {
-      margin: 0;
-      padding: 0;
-      background: linear-gradient(135deg, #ffffff 50%, #25D366 50%);
+      background: linear-gradient(135deg, #f3f4f6 50%, #25D366 50%);
       height: 100vh;
       display: flex;
       justify-content: center;
       align-items: center;
+      overflow: hidden;
     }
 
+    /* Login Container */
     .login-container {
-      background: white;
-      padding: 40px 30px;
-      border-radius: 20px;
-      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-      width: 300px;
+      background: #ffffff;
+      padding: 2.5rem;
+      border-radius: 12px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+      width: 100%;
+      max-width: 360px;
       text-align: center;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .login-container:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
     }
 
     .login-container h1 {
-      margin-bottom: 30px;
-      font-size: 24px;
-      font-weight: bold;
+      font-size: 1.75rem;
+      font-weight: 700;
+      color: #1f2937;
+      margin-bottom: 1.5rem;
+      position: relative;
     }
 
+    .login-container h1::after {
+      content: '';
+      width: 40px;
+      height: 3px;
+      background: #2563eb;
+      position: absolute;
+      bottom: -8px;
+      left: 50%;
+      transform: translateX(-50%);
+      border-radius: 2px;
+    }
+
+    /* Form Inputs */
     .login-container input[type="text"],
     .login-container input[type="password"] {
       width: 100%;
-      padding: 12px;
-      margin-bottom: 20px;
-      border: none;
-      border-radius: 15px;
-      box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
+      padding: 0.85rem;
+      margin-bottom: 1.25rem;
+      border: 1px solid #d1d5db;
+      border-radius: 8px;
+      font-size: 0.95rem;
+      color: #1f2937;
+      background: #f9fafb;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
     }
 
+    .login-container input[type="text"]::placeholder,
+    .login-container input[type="password"]::placeholder {
+      color: #6b7280;
+    }
+
+    .login-container input[type="text"]:focus,
+    .login-container input[type="password"]:focus {
+      outline: none;
+      border-color: #2563eb;
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+    }
+
+    /* Submit Button */
     .login-container input[type="submit"] {
       width: 100%;
-      padding: 12px;
-      background: #075E54;
-      color: white;
+      padding: 0.85rem;
+      background: #2563eb;
+      color: #ffffff;
       border: none;
-      border-radius: 25px;
-      font-weight: bold;
+      border-radius: 8px;
+      font-size: 0.95rem;
+      font-weight: 600;
       cursor: pointer;
-      transition: 0.3s ease;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      transition: background 0.2s ease, transform 0.2s ease;
     }
 
     .login-container input[type="submit"]:hover {
-      background: #075E54;
+      background: #1d4ed8;
+      transform: translateY(-2px);
     }
 
+    .login-container input[type="submit"]:active {
+      transform: translateY(0);
+    }
+
+    /* Sign-Up Link */
     .login-container a {
       display: inline-block;
-      margin-top: 20px;
-      color: #007bff;
+      margin-top: 1.25rem;
+      color: #2563eb;
       text-decoration: none;
-      font-size: 14px;
+      font-size: 0.9rem;
+      font-weight: 500;
+      transition: color 0.2s ease;
     }
 
+    .login-container a:hover {
+      color: #1d4ed8;
+      text-decoration: underline;
+    }
+
+    /* Error Message */
     .login-container p {
-      color: red;
-      font-size: 14px;
+      color: #b91c1c;
+      font-size: 0.85rem;
+      margin-bottom: 1rem;
+      font-weight: 500;
+    }
+
+    /* Input Error State */
+    .login-container input.error {
+      border-color: #b91c1c;
+      box-shadow: 0 0 0 3px rgba(185, 28, 28, 0.1);
+      animation: shake 0.3s ease-in-out;
+    }
+
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      25% { transform: translateX(-5px); }
+      75% { transform: translateX(5px); }
+    }
+
+    /* Responsive Adjustments */
+    @media (max-width: 480px) {
+      .login-container {
+        padding: 1.5rem;
+        max-width: 90%;
+      }
+
+      .login-container h1 {
+        font-size: 1.5rem;
+      }
+
+      .login-container input[type="text"],
+      .login-container input[type="password"],
+      .login-container input[type="submit"] {
+        padding: 0.75rem;
+        font-size: 0.9rem;
+      }
+
+      .login-container a {
+        font-size: 0.85rem;
+      }
     }
   </style>
 </head>
 <body>
-
   <div class="login-container">
     <h1>Advocate Login</h1>
 
@@ -86,13 +182,12 @@
 
     <form method="POST">
       {% csrf_token %}
-      <input name="username" type="text" placeholder="username" required />
-      <input name="password" type="password" placeholder="password" required />
-      <input type="submit" value="LOGIN" />
+      <input name="username" type="text" placeholder="Username" required autocomplete="username" />
+      <input name="password" type="password" placeholder="Password" required autocomplete="current-password" />
+      <input type="submit" value="Login" />
     </form>
 
     <a href="{% url 'advocate_signup' %}">Sign Up</a>
   </div>
-
 </body>
 </html>

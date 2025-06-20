@@ -4,7 +4,11 @@ document.addEventListener("DOMContentLoaded", function () {
   const userInput = document.getElementById("query");
   const docTypeSelect = document.getElementById("docType");
   const linkSection = document.getElementById("link-section");
+  const uploadInput = document.getElementById("draft-upload");
 
+  let docDraftSessionId = null;
+  let draftStarted = false;
+  let draftUploadedFile = null;
   let selectedDocType = "";
   let questions = [];
   let currentQuestionIndex = 0;
@@ -67,15 +71,31 @@ document.addEventListener("DOMContentLoaded", function () {
       { key: "date_issued", text: "What is the issue date? (DD-MM-YYYY)" },
       { key: "valid_until", text: "What is the validity date? (DD-MM-YYYY)" },
       { key: "remarks", text: "Any additional remarks for the NOC?" }
-    ]
+    ],
+    doc_draft: []
   };
 
   function appendMessage(message, sender = "bot") {
     const msgDiv = document.createElement("div");
     msgDiv.className = `message ${sender}`;
-    msgDiv.innerText = message;
+    msgDiv.textContent = message;
     chatbox.appendChild(msgDiv);
     chatbox.scrollTop = chatbox.scrollHeight;
+  }
+
+  function getCsrfToken() {
+    const tokenElement = document.querySelector('[name=csrfmiddlewaretoken]');
+    return tokenElement ? tokenElement.value : "";
+  }
+
+  function resetChat() {
+    chatbox.innerHTML = "<div class='message bot'>Hi! I’m your legal assistant. Type /start to begin.</div>";
+    linkSection.innerHTML = "";
+    currentQuestionIndex = 0;
+    userResponses = {};
+    draftStarted = false;
+    docDraftSessionId = null;
+    uploadInput.value = "";
   }
 
   function askNextQuestion() {
@@ -86,101 +106,152 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   }
 
-  function resetChat() {
-    chatbox.innerHTML = "<div class='message bot'>Hi! I’m your legal assistant. Type /start to begin.</div>";
-    linkSection.innerHTML = "";
-    currentQuestionIndex = 0;
-    userResponses = {};
+  async function handleDocDraft(userMessage) {
+    console.log("handleDocDraft called. File:", draftUploadedFile);
+
+    if (!draftUploadedFile) {
+      appendMessage("Please upload a PDF before starting doc draft Q&A.", "bot error");
+      return;
+    }
+
+    if (!draftUploadedFile.name.toLowerCase().endsWith(".pdf")) {
+      appendMessage("Invalid file type. Please upload a valid PDF.", "bot error");
+      draftUploadedFile = null;
+      uploadInput.value = "";
+      return;
+    }
+
+    if (!draftStarted) {
+      const formData = new FormData();
+      formData.append("files", draftUploadedFile);
+
+      appendMessage("Uploading PDF, please wait...", "bot uploading");
+
+      try {
+        const response = await fetch("/upload/", {
+          method: "POST",
+          body: formData
+        });
+
+        if (!response.ok) {
+          throw new Error(`Upload failed: ${response.status}`);
+        }
+
+        const data = await response.json();
+        console.log("Upload response:", data);
+
+        const responseData = data[0];
+
+        if (responseData.error) {
+          appendMessage(responseData.error, "bot error");
+          return;
+        }
+
+        docDraftSessionId = responseData.session_id;
+        draftStarted = true;
+
+        appendMessage(responseData.current_question, "bot");
+      } catch (err) {
+        console.error("Error uploading file:", err);
+        appendMessage("File upload failed. Try again later.", "bot error");
+      }
+      return;
+    }
+
+    try {
+      const response = await fetch("/answer/", {
+        method: "POST",
+        headers: {
+          "X-CSRFToken": getCsrfToken(),
+          "Content-Type": "application/x-www-form-urlencoded"
+        },
+        body: new URLSearchParams({
+          session_id: docDraftSessionId,
+          answer: userMessage
+        })
+      });
+
+      const data = await response.json();
+
+      if (data.generate) {
+        const finalRes = await fetch("/generate_filled_text/", {
+          method: "POST",
+          headers: {
+            "X-CSRFToken": getCsrfToken(),
+            "Content-Type": "application/x-www-form-urlencoded"
+          },
+          body: new URLSearchParams({
+            session_id: docDraftSessionId
+          })
+        });
+
+        const finalData = await finalRes.json();
+
+        if (finalData.document_url) {
+          appendMessage("✅ Document ready.", "bot");
+          linkSection.innerHTML = `<a href="${finalData.document_url}" target="_blank">📄 Download PDF</a>`;
+        } else {
+          appendMessage("Document generation failed.", "bot error");
+        }
+      } else {
+        appendMessage(data.current_question, "bot");
+      }
+    } catch (err) {
+      console.error("Doc draft error:", err);
+      appendMessage("Something went wrong. Try again.", "bot error");
+    }
   }
 
-  function generateLegalNotice() {
+  async function generateLegalNotice() {
     const data = new URLSearchParams();
     for (const q of questions) {
       data.append(q.key, userResponses[q.key] || "");
     }
     data.append("document_type", selectedDocType);
 
-    // Show loading state
-    appendMessage("Generating document, please wait...", "bot generating");
-    linkSection.innerHTML = "<p>Loading...</p>";
+    appendMessage("Generating document, please wait...", "bot");
 
-    fetch("/generate_legal_doc_wordfile/", {
-      method: "POST",
-      headers: {
-        "X-CSRFToken": document.querySelector('[name=csrfmiddlewaretoken]').value,
-        "Content-Type": "application/x-www-form-urlencoded"
-      },
-      body: data
-    })
-      .then(res => {
-        linkSection.innerHTML = ""; // Clear loading state
-        console.log("Server response status:", res.status); // Debug: Log status
-        if (!res.ok) throw new Error(`HTTP error! Status: ${res.status}`);
-        return res.json();
-      })
-      .then(result => {
-        console.log("Server response data:", result); // Debug: Log response
-        linkSection.innerHTML = "";
-        if (result.status === "success" && (result.document1 || result.document2)) {
-          appendMessage(`${selectedDocType === 'divorce' ? 'Divorce Notice' : selectedDocType === 'nda' ? 'NDA' : selectedDocType === 'sale_deed' ? 'Sale Deed' : 'No Objection Certificate'} generated successfully:`, "bot");
-
-          if (result.document1) {
-            const link1 = document.createElement("a");
-            link1.href = result.document1;
-            link1.textContent = `Download ${selectedDocType === 'divorce' ? 'Divorce Notice' : selectedDocType === 'nda' ? 'NDA' : selectedDocType === 'sale_deed' ? 'Sale Deed' : 'No Objection Certificate'} Document 1`;
-            link1.classList.add("download-link");
-            link1.target = "_blank";
-            linkSection.appendChild(link1);
-            linkSection.appendChild(document.createElement("br"));
-            linkSection.appendChild(document.createTextNode(" "));
-          }
-
-          if (result.document2) {
-            const link2 = document.createElement("a");
-            link2.href = result.document2;
-            link2.textContent = `Download ${selectedDocType === 'divorce' ? 'Divorce Notice' : selectedDocType === 'nda' ? 'NDA' : selectedDocType === 'sale_deed' ? 'Sale Deed' : 'No Objection Certificate'} Document 2`;
-            link2.classList.add("download-link");
-            link2.target = "_blank";
-            linkSection.appendChild(link2);
-          }
-        } else if (result.status === "success" && !(result.document1 || result.document2)) {
-          appendMessage("Document generation completed, but no files were returned. Contact support if this persists.", "bot error");
-        } else {
-          appendMessage(result.error || "No documents were generated. Please check your inputs and try again.", "bot error");
-          // Add retry button
-          const retryButton = document.createElement("button");
-          retryButton.textContent = "Retry";
-          retryButton.classList.add("retry-button");
-          retryButton.onclick = () => {
-            currentQuestionIndex = 0;
-            userResponses = {};
-            resetChat();
-            questions = questionSets[selectedDocType];
-            askNextQuestion();
-          };
-          linkSection.appendChild(retryButton);
-        }
-      })
-      .catch(err => {
-        console.error("Fetch error:", err); // Debug: Log error
-        linkSection.innerHTML = "";
-        appendMessage("An error occurred while generating the document. Please try again later.", "bot error");
-        // Add retry button
-        const retryButton = document.createElement("button");
-        retryButton.textContent = "Retry";
-        retryButton.classList.add("retry-button");
-        retryButton.onclick = () => {
-          currentQuestionIndex = 0;
-          userResponses = {};
-          resetChat();
-          questions = questionSets[selectedDocType];
-          askNextQuestion();
-        };
-        linkSection.appendChild(retryButton);
+    try {
+      const response = await fetch("/generate_legal_doc_wordfile/", {
+        method: "POST",
+        headers: {
+          "X-CSRFToken": getCsrfToken(),
+          "Content-Type": "application/x-www-form-urlencoded"
+        },
+        body: data
       });
+
+      const result = await response.json();
+
+      if (result.status === "success") {
+        appendMessage("✅ Document generated successfully.", "bot");
+        if (result.document1) {
+          linkSection.innerHTML += `<a href="${result.document1}" target="_blank">Download Document 1</a><br>`;
+        }
+        if (result.document2) {
+          linkSection.innerHTML += `<a href="${result.document2}" target="_blank">Download Document 2</a>`;
+        }
+      } else {
+        appendMessage("Failed to generate document.", "bot error");
+      }
+    } catch (err) {
+      console.error("Error generating document:", err);
+      appendMessage("Server error while generating document.", "bot error");
+    }
   }
 
-  chatForm.addEventListener("submit", function (e) {
+  uploadInput.addEventListener("change", () => {
+    if (uploadInput.files.length > 0) {
+      draftUploadedFile = uploadInput.files[0];
+      console.log("File uploaded:", draftUploadedFile.name);
+      appendMessage("✅ Draft uploaded. Type /start to begin Q&A.", "bot");
+    } else {
+      draftUploadedFile = null;
+      appendMessage("No file selected.", "bot error");
+    }
+  });
+
+  chatForm.addEventListener("submit", async function (e) {
     e.preventDefault();
     const userMessage = userInput.value.trim();
     if (!userMessage) return;
@@ -191,20 +262,35 @@ document.addEventListener("DOMContentLoaded", function () {
     if (userMessage.toLowerCase() === "/start") {
       selectedDocType = docTypeSelect.value;
       if (!selectedDocType) {
-        appendMessage("Please select a document type first.", "bot error");
+        appendMessage("Please select a document type.", "bot error");
         return;
       }
+
       resetChat();
-      questions = questionSets[selectedDocType];
-      setTimeout(askNextQuestion, 500);
+      questions = questionSets[selectedDocType] || [];
+
+      if (selectedDocType === "doc_draft") {
+        if (!draftUploadedFile) {
+          appendMessage("Please upload a PDF before starting doc draft Q&A.", "bot error");
+          return;
+        }
+        await handleDocDraft(userMessage);
+      } else {
+        setTimeout(askNextQuestion, 500);
+      }
+    } else if (selectedDocType === "doc_draft") {
+      await handleDocDraft(userMessage);
     } else if (currentQuestionIndex < questions.length) {
       const key = questions[currentQuestionIndex].key;
       userResponses[key] = userMessage;
       currentQuestionIndex++;
       setTimeout(askNextQuestion, 500);
+    } else {
+      appendMessage("No more questions. Type /start to begin again.", "bot");
     }
   });
 
-  // Initialize
+  // Initialize chat UI
   resetChat();
 });
+

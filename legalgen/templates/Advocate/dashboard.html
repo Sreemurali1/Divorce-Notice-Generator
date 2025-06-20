@@ -4,6 +4,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+
   <title>Advocate Dashboard</title>
   <link rel="stylesheet" href="{% static 'css/styles.css' %}">
 </head>
@@ -43,17 +45,34 @@
           <option value="nda">Non-Disclosure Agreement</option>
           <option value="sale_deed">Sale Deed</option>
           <option value="noc">No Objection Certificate</option>
+          <option value="doc_draft">Doc Draft</option>
         </select>
-        <div id="chat-box" class="chatbox"></div>
-        <form id="chat-form" class="chat-form">
+        <div class="chatbox" id="chat-box"></div>
+        <form id="chat-form" class="chat-form" style="display: flex; align-items: center; gap: 10px;">
           {% csrf_token %}
-          <input id="query" name="query" type="text" placeholder="Type your response…" required autocomplete="off" />
-          <button type="submit">Send</button>
+
+          <!-- Upload Icon Label -->
+          <label for="draft-upload" class="upload-icon" title="Upload PDF" style="cursor: pointer; margin-right: 5px;">
+            <i class="fa-solid fa-square-plus fa-2x" ></i>
+
+            <input id="draft-upload" type="file" accept="application/pdf" hidden />
+          </label>
+
+          <!-- Text Input -->
+          <input id="query" name="query" type="text" placeholder="Type your response…" required autocomplete="off"
+                style="flex-grow: 1; padding: 8px;" />
+
+          <!-- Submit Button -->
+          <button type="submit" style="padding: 8px 16px;">Send</button>
         </form>
+
+
         <div id="link-section"></div>
       </section>
 
       <!-- Client History Sections -->
+      <!-- ... Your existing client history tables remain unchanged ... -->
+       <!-- Client History Sections -->
       <div class="client-history-wrapper">
         <!-- Divorce Client History --> 
         <section class="client-history">
@@ -198,18 +217,30 @@
     </div>
   </main>
 
-  <!-- JavaScript for Sidebar Toggle -->
+    <!-- JavaScript for Sidebar Toggle -->
   <script>
     const toggleSidebar = document.getElementById('toggle-sidebar');
     const sidebar = document.querySelector('.sidebar');
     const container = document.querySelector('.container');
 
     toggleSidebar.addEventListener('click', () => {
-      sidebar.classList.toggle('sidebar-active');
-      container.classList.toggle('sidebar-active');
+    sidebar.classList.toggle('sidebar-active');
+    container.classList.toggle('sidebar-active');
+
+    document.getElementById('fileInput').addEventListener('change', function () {
+      const label = this.parentElement;
+      if (this.files.length > 0) {
+        label.classList.add('has-file');
+        setTimeout(() => label.classList.remove('has-file'), 600); // Match animation duration
+  }
+});
+
     });
   </script>
   <!-- External chatbot logic -->
+
+  
   <script src="{% static 'js/chatbot.js' %}"></script>
 </body>
 </html>
+

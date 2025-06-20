@@ -7,9 +7,10 @@
 
 body {
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  background: linear-gradient(135deg, #f3f4f6, #e5e7eb);
-  color: #1f2937;
+  background: #f9fafb; /* Neutral light background */
+  color: #1f2937; /* Dark gray for text */
   line-height: 1.6;
+  font-size: 16px; /* Base font size */
 }
 
 /* Sidebar Styles */
@@ -17,12 +18,12 @@ body {
   position: fixed;
   top: 0;
   left: 0;
-  width: 280px;
+  width: 260px; /* Slightly narrower for elegance */
   height: 100vh;
-  background: linear-gradient(to bottom, #1e3a8a, #1e40af);
+  background: #1e3a8a; /* Solid dark blue for professionalism */
   color: #ffffff;
-  padding: 2rem;
-  box-shadow: 4px 0 12px rgba(0, 0, 0, 0.2);
+  padding: 2.5rem 1.5rem; /* Increased padding */
+  box-shadow: 2px 0 8px rgba(0, 0, 0, 0.1); /* Subtle shadow */
   transition: transform 0.3s ease-in-out;
   z-index: 100;
 }
@@ -32,11 +33,10 @@ body {
 }
 
 .sidebar h2 {
-  font-size: 1.5rem;
-  font-weight: 700;
-  margin-bottom: 1.5rem;
-  text-align: center;
-  letter-spacing: 0.05em;
+  font-size: 1.4rem; /* Slightly smaller */
+  font-weight: 600; /* Medium weight for clarity */
+  margin-bottom: 2rem;
+  text-align: left; /* Align left for simplicity */
 }
 
 .sidebar ul {
@@ -44,7 +44,7 @@ body {
 }
 
 .sidebar li {
-  margin-bottom: 1rem;
+  margin-bottom: 1.2rem;
   font-size: 0.95rem;
   display: flex;
   flex-wrap: wrap;
@@ -52,8 +52,8 @@ body {
 }
 
 .sidebar li strong {
-  color: #93c5fd;
-  width: 120px;
+  color: #bfdbfe; /* Softer blue for labels */
+  width: 110px; /* Slightly smaller for balance */
 }
 
 .toggle-sidebar {
@@ -62,19 +62,21 @@ body {
   color: #ffffff;
   cursor: pointer;
   display: none;
+  font-size: 1.5rem;
+  padding: 0.5rem;
 }
 
 /* Main Content Styles */
 .container {
-  margin-left: 280px;
-  padding: 2rem;
+  margin-left: 260px; /* Match sidebar width */
+  padding: 2.5rem; /* Increased padding */
   min-height: 100vh;
   transition: margin-left 0.3s ease-in-out;
 }
 
 .container header h1 {
-  font-size: 2rem;
-  font-weight: 800;
+  font-size: 1.8rem; /* Slightly smaller for elegance */
+  font-weight: 700; /* Bold but not overly heavy */
   color: #111827;
   margin-bottom: 1.5rem;
   position: relative;
@@ -82,40 +84,39 @@ body {
 
 .container header h1::after {
   content: '';
-  width: 60px;
-  height: 4px;
-  background: #2563eb;
+  width: 40px; /* Shorter underline */
+  height: 3px; /* Thinner */
+  background: #1e40af; /* Match accent color */
   position: absolute;
-  bottom: -8px;
+  bottom: -6px;
   left: 0;
-  border-radius: 2px;
+  border-radius: 1px;
 }
 
 /* Grid Layout */
 .main-content {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 1.5rem;
+  gap: 2rem; /* Increased gap for breathing room */
 }
 
 /* Chatbot Section */
 .chatbot {
   background: #ffffff;
-  padding: 1.5rem;
-  border-radius: 12px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  padding: 2rem; /* Increased padding */
+  border-radius: 8px; /* Softer corners */
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05); /* Subtle shadow */
+  transition: box-shadow 0.2s ease;
 }
 
 .chatbot:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); /* Subtle hover effect */
 }
 
 .chatbot h2 {
-  font-size: 1.25rem;
+  font-size: 1.2rem;
   font-weight: 600;
-  margin-bottom: 1rem;
+  margin-bottom: 1.2rem;
   color: #1f2937;
 }
 
@@ -130,80 +131,168 @@ body {
 .chatbot select,
 .chatbot input {
   width: 100%;
-  padding: 0.75rem;
+  padding: 0.8rem;
   border: 1px solid #d1d5db;
-  border-radius: 8px;
+  border-radius: 6px; /* Softer corners */
   font-size: 0.95rem;
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  transition: border-color 0.2s ease;
 }
 
 .chatbot select:focus,
 .chatbot input:focus {
   outline: none;
-  border-color: #2563eb;
-  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+  border-color: #1e40af;
+  box-shadow: 0 0 0 2px rgba(30, 64, 175, 0.1); /* Subtle focus ring */
 }
 
 .chatbox {
   background: #f9fafb;
-  padding: 1rem;
+  padding: 1.2rem;
   border: 1px solid #e5e7eb;
-  border-radius: 8px;
-  height: 360px;
+  border-radius: 6px;
+  height: 400px; /* Slightly taller for better usability */
   overflow-y: auto;
-  margin: 1rem 0;
+  margin: 1.2rem 0;
   scrollbar-width: thin;
-  scrollbar-color: #6b7280 #f3f4f6;
+  scrollbar-color: #9ca3af #f9fafb;
 }
 
 .chatbox::-webkit-scrollbar {
-  width: 8px;
+  width: 6px; /* Thinner scrollbar */
 }
 
 .chatbox::-webkit-scrollbar-thumb {
-  background: #6b7280;
-  border-radius: 4px;
+  background: #9ca3af;
+  border-radius: 3px;
 }
 
 .chat-form {
   display: flex;
-  gap: 0.5rem;
+  gap: 0.75rem;
 }
 
 .chat-form button {
-  background: #2563eb;
+  background: #1e40af; /* Match accent color */
   color: #ffffff;
-  padding: 0.75rem 1.5rem;
+  padding: 0.8rem 1.5rem;
   border: none;
-  border-radius: 8px;
+  border-radius: 6px;
   font-weight: 500;
   cursor: pointer;
-  transition: background 0.2s ease, transform 0.2s ease;
+  transition: background 0.2s ease;
 }
 
 .chat-form button:hover {
-  background: #1d4ed8;
-  transform: translateY(-2px);
+  background: #1e3a8a; /* Slightly darker */
+}
+
+/* Custom properties for theming */
+:root {
+  --primary-color: #374151; /* Neutral gray */
+  --background-color: #1967b6; /* Light neutral */
+  --success-color: #059669; /* Muted green */
+  --error-color: #b91c1c; /* Muted red */
+  --icon-size: 20px; /* Smaller icon */
+  --container-size: 40px; /* Smaller container */
+}
+
+/* Upload Icon Container */
+.upload-icon {
+  cursor: pointer;
+  margin-right: 8px; /* Consistent with previous CSS for spacing */
+  position: relative;
+  display: inline-flex; /* Ensure proper flex alignment */
+  align-items: center;
+  justify-content: center;
+  width: var(--container-size); /* e.g., 40px from :root */
+  height: 20px;; /* Match width for square shape */
+  
+
+  left: 13px;
+
+
+  transition: all 0.2s ease; /* Smooth transition for all properties */
+}
+
+.upload-icon input[type="file"] {
+  display: none;
+}
+
+.upload-icon::before {
+  content: '';
+  width: var(--icon-size); /* e.g., 18px from :root */
+  height: var(--icon-size);
+  background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" fill="%23374151" viewBox="0 0 24 24"><path d="M12 4v12m-8-8h16"/></svg>') no-repeat center; /* Simple upload icon */
+  background-size: contain;
+}
+
+.upload-icon:hover {
+  background: var(--accent-color); /* e.g., #1e40af */
+
+  color: #310b82;
+}
+
+.upload-icon:hover::before {
+  background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" fill="%23ffffff" viewBox="0 0 24 24"><path d="M12 4v12m-8-8h16"/></svg>') no-repeat center;
+  background-size: contain;
+}
+
+.upload-icon:active {
+  transform: scale(0.98);
+}
+
+.upload-icon:focus-within {
+  outline: 2px solid var(--accent-color);
+  outline-offset: 5px;
+
+}
+
+.upload-icon:disabled {
+  cursor: not-allowed;
+  background: #e5e7eb;
+  color: #9ca3af;
+  border-color: #e5e7eb;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .upload-icon {
+    --container-size: 36px;
+    --icon-size: 16px;
+  }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .upload-icon {
+    background: #ffffff;
+    color: #000000;
+    border: 2px solid #000000;
+  }
+  .upload-icon:hover {
+    background: #000000;
+    color: #ffffff;
+    border-color: #ffffff;
+  }
 }
 
 /* Client History Sections */
 .client-history {
   background: #ffffff;
-  padding: 1.5rem;
-  border-radius: 12px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  padding: 2rem; /* Increased padding */
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  transition: box-shadow 0.2s ease;
 }
 
 .client-history:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 .client-history h2 {
-  font-size: 1.25rem;
+  font-size: 1.2rem;
   font-weight: 600;
-  margin-bottom: 1rem;
+  margin-bottom: 1.2rem;
   color: #1f2937;
 }
 
@@ -221,14 +310,12 @@ body {
 .client-table thead {
   background: #f3f4f6;
   color: #374151;
-  text-transform: uppercase;
-  font-size: 0.85rem;
+  font-weight: 600;
 }
 
 .client-table th {
   padding: 1rem;
   text-align: left;
-  font-weight: 600;
 }
 
 .client-table tbody tr {
@@ -242,121 +329,104 @@ body {
 .client-table td {
   padding: 1rem;
   border-bottom: 1px solid #e5e7eb;
-  text-align: center; /* Center align text and links */
+  text-align: center;
 }
 
-/* Styling for download links in client tables */
 .client-table a {
   display: inline-block;
-  padding: 8px 12px;
-  background-color: #4CAF50; /* Green background */
-  color: #ffffff; /* White text */
-  text-decoration: none; /* Remove underline */
-  border-radius: 4px; /* Rounded corners */
-  font-size: 14px;
-  font-weight: 500;
-  transition: background-color 0.3s ease, transform 0.2s ease; /* Smooth hover effects */
-}
-
-.client-table a:hover {
-  background-color: #45a049; /* Darker green on hover */
-  transform: translateY(-2px); /* Slight lift effect */
-}
-
-.client-table a:active {
-  background-color: #3d8b40; /* Darker green on click */
-  transform: translateY(0); /* Reset lift on click */
-}
-
-.client-table td:not(:has(a)) {
-  color: #888; /* Gray for '—' */
-}
-
-/* Styling for download link in chatbot link-section */
-#link-section {
-  margin-top: 15px;
-  text-align: center; /* Center the download link */
-}
-
-#link-section .download-link {
-  display: inline-block;
-  padding: 10px 16px;
-  background-color: #4CAF50; /* Match table download button color */
+  padding: 0.6rem 1rem;
+  background-color: var(--success-color); /* Muted green */
   color: #ffffff;
   text-decoration: none;
   border-radius: 4px;
-  font-size: 15px;
+  font-size: 0.85rem;
   font-weight: 500;
-  transition: background-color 0.3s ease, transform 0.2s ease;
-  margin: 5px; /* Space between multiple links */
+  transition: background-color 0.2s ease;
+}
+
+.client-table a:hover {
+  background-color: #047857; /* Darker green */
+}
+
+.client-table td:not(:has(a)) {
+  color: #6b7280; /* Neutral gray for placeholders */
+}
+
+/* Chatbot Download Link */
+#link-section {
+  margin-top: 1rem;
+  text-align: center;
+}
+
+#link-section .download-link {
+  padding: 0.6rem 1.2rem;
+  background-color: var(--success-color);
+  color: #ffffff;
+  text-decoration: none;
+  border-radius: 4px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  transition: background-color 0.2s ease;
 }
 
 #link-section .download-link:hover {
-  background-color: #45a049;
-  transform: translateY(-2px);
+  background-color: #047857;
 }
 
-#link-section .download-link:active {
-  background-color: #3d8b40;
-  transform: translateY(0);
-}
-
-/* Styling for chat messages */
+/* Chat Messages */
 .message {
-  padding: 10px;
-  margin: 5px 0;
-  border-radius: 5px;
-  max-width: 80%;
+  padding: 0.8rem 1rem;
+  margin: 0.5rem 0;
+  border-radius: 6px;
+  max-width: 85%;
   word-wrap: break-word;
 }
 
 .message.user {
-  background-color: #2563eb; /* Blue for user messages */
-  color: #ffffff; /* White text for contrast */
+  background-color: #a8aeb3;
+  color: #0b0b0b;
   margin-left: auto;
   margin-right: 1rem;
   text-align: right;
 }
 
 .message.bot {
-  background-color: #e5e7eb; /* Light gray for bot messages */
+  background-color: #e5e7eb;
   color: #1f2937;
   margin-right: auto;
   margin-left: 0.5rem;
 }
 
 .message.bot.error {
-  background-color: #ffebee; /* Light red for error messages */
-  color: #b91c1c;
-  margin-left: auto;
+  background-color: #fef2f2; /* Softer red */
+  color: var(--error-color);
 }
 
 .message.bot.generating {
-  background-color: #fff3cd; /* Light yellow for generating message */
-  color: #856404;
+  background-color: #fefce8; /* Softer yellow */
+  color: #713f12;
   font-style: italic;
-  margin-left: auto;
 }
 
 /* Input Error State */
 input.error {
-  border-color: #b91c1c !important;
+  border-color: var(--error-color) !important;
   animation: shake 0.3s ease-in-out;
 }
 
 @keyframes shake {
   0%, 100% { transform: translateX(0); }
-  25% { transform: translateX(-5px); }
-  75% { transform: translateX(5px); }
+  25% { transform: translateX(-4px); }
+  75% { transform: translateX(4px); }
 }
 
 /* Select Highlight */
 select.highlight {
-  border-color: #2563eb !important;
-  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.3);
+  border-color: var(--accent-color) !important;
+  box-shadow: 0 0 0 2px rgba(30, 64, 175, 0.2);
 }
 
-/* Responsive adjustments */
+/* Responsive Adjustments */
 @media (max-width: 1024px) {
   .main-content {
     grid-template-columns: 1fr;
@@ -378,27 +448,27 @@ select.highlight {
 
   .container {
     margin-left: 0;
-    padding: 1rem;
+    padding: 1.5rem;
   }
 
   .container.sidebar-active {
-    margin-left: 280px;
+    margin-left: 260px;
   }
 
   .client-table th,
   .client-table td {
-    padding: 0.75rem;
+    padding: 0.8rem;
     font-size: 0.85rem;
   }
 
   .client-table a {
-    padding: 6px 10px;
-    font-size: 12px;
+    padding: 0.5rem 0.8rem;
+    font-size: 0.8rem;
   }
 
   #link-section .download-link {
-    padding: 8px 12px;
-    font-size: 13px;
+    padding: 0.5rem 1rem;
+    font-size: 0.85rem;
   }
 }
 
@@ -410,6 +480,11 @@ select.highlight {
   .chat-form button {
     width: 100%;
   }
+
+  .upload-icon {
+    --container-size: 24px;
+    --icon-size: 2px;
+  }
 }
 
 /* Empty State */
@@ -420,34 +495,53 @@ select.highlight {
   padding: 2rem;
 }
 
+/* Download Link and Retry Button */
 .download-link {
-    display: inline-block;
-    margin: 10px 0;
-    padding: 8px 16px;
-    background-color: #4CAF50;
-    color: white;
-    text-decoration: none;
-    border-radius: 4px;
+  display: inline-block;
+  margin: 0.5rem 0;
+  padding: 0.6rem 1.2rem;
+  background-color: var(--success-color);
+  color: #ffffff;
+  text-decoration: none;
+  border-radius: 4px;
+  font-size: 0.9rem;
 }
+
 .download-link:hover {
-    background-color: #45a049;
+  background-color: #047857;
 }
+
 .retry-button {
-    margin: 10px 0;
-    padding: 8px 16px;
-    background-color: #f44336;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
+  margin: 0.5rem 0;
+  padding: 0.6rem 1.2rem;
+  background-color: var(--error-color);
+  color: #ffffff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.9rem;
 }
+
 .retry-button:hover {
-    background-color: #d32f2f;
+  background-color: #991b1b; /* Darker red */
 }
-.message.bot.generating {
-    font-style: italic;
-    color: #888;
-}
-.message.bot.error {
-    color: #f44336;
+
+/* High Contrast Mode Support */
+@media (prefers-contrast: high) {
+  .upload-icon {
+    background: #ffffff;
+    color: #000000;
+    border: 1px solid #000000;
+  }
+
+  .upload-icon:hover {
+    background: #000000;
+    color: #ffffff;
+  }
+
+  .chat-form button,
+  .client-table a,
+  .download-link {
+    border: 2px solid #000000;
+  }
 }

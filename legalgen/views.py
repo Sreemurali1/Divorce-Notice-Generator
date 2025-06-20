@@ -6,7 +6,7 @@ import json
 from datetime import datetime
 import logging
 
-from django.http import JsonResponse, FileResponse, HttpResponse
+from django.http import JsonResponse
 from django.shortcuts import render, redirect
 from django.contrib.auth import login, authenticate
 from django.views.decorators.csrf import csrf_exempt
@@ -15,8 +15,8 @@ from django.core.files import File
 
 from .models import Advocate, Client, NDA_Details, SaleDeed, NoObjectionCertificate
 from .forms import SignupForm
-from .generated_word import generate_wordpad
-from .prompts import prompt_NDA, prompt_divorce, prompt_sale_deed, prompt_noc
+from .generated_word import generate_professional_pdf
+from .prompts import prompt_NDA, prompt_divorce, prompt_sale_deed, prompt_noc 
 
 from groq import Groq
 from dotenv import load_dotenv
@@ -50,7 +50,7 @@ def generate_legal_doc_wordfile(request):
         document_type = request.POST.get("document_type")
         if not document_type:
             return JsonResponse({"error": "document_type is missing"}, status=400)
-        if document_type not in ["divorce", "nda"]:
+        if document_type not in ["divorce", "nda","sale_deed", "noc","doc_draft"]:
             return JsonResponse({"error": f"Invalid document_type: {document_type}"}, status=400)
 
         related_instance = None
@@ -90,8 +90,9 @@ def generate_legal_doc_wordfile(request):
 
             advocate_details = (
                 f"From:\nAdvocate {advocate.name}\n"
-                f"Enrollment Number: {advocate.enrollment_number}\n"
                 f"Address: {advocate.address}\n"
+                f"Phone: {advocate.phone}\n"
+                f"Mail: {advocate.email}\n"
             )
 
             prompt_query = (
@@ -270,6 +271,8 @@ def generate_legal_doc_wordfile(request):
             ]
             prompt_template = prompt_noc
 
+          
+
         file_urls = []
 
         for index, prompt in enumerate(prompt_template):
@@ -285,10 +288,10 @@ def generate_legal_doc_wordfile(request):
 
             content = completion.choices[0].message.content
 
-            with tempfile.NamedTemporaryFile(delete=False, suffix=".docx") as tmp:
+            with tempfile.NamedTemporaryFile(delete=False, suffix=".pdf") as tmp:
                 tmp_path = tmp.name
 
-            generate_wordpad(tmp_path, content)
+            generate_professional_pdf(tmp_path, content)
 
             with open(tmp_path, "rb") as f:
                 if index == 0:
@@ -357,7 +360,7 @@ def advocate_dashboard_view(request):
 
     # Fetch related models
     clients = Client.objects.filter(advocate=advocate)
-    nda_list = NDA_Details.objects.filter(advocate=advocate).order_by('-created_at')  # Optional ordering
+    nda_list = NDA_Details.objects.filter(advocate=advocate).order_by('-created_at')
     noc_list = NoObjectionCertificate.objects.filter(advocate=advocate).order_by('-created_at')
     sale_deed_list = SaleDeed.objects.filter(advocate=advocate).order_by('-created_at')
 
@@ -369,7 +372,6 @@ def advocate_dashboard_view(request):
         "sale_deed": sale_deed_list
 
     })
-
 
 
 @csrf_exempt
