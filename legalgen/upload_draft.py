@@ -12,7 +12,7 @@ import tempfile
 from django.core.files import File
 
 from .models import LegalSession
-from .generated_word import generate_professional_pdf 
+from .generated_word import generate_professional_pdf
 
 logger = logging.getLogger(__name__)
 load_dotenv()
