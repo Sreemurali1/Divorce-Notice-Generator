@@ -220,3 +220,4 @@ def generate_filled_text(request):
 
     except Exception as e:
         return JsonResponse({"error": f"Failed to generate document: {str(e)}"}, status=500)
+

@@ -94,6 +94,7 @@ def generate_legal_doc_wordfile(request):
                 f"Address: {advocate.address}\n"
                 f"Phone: {advocate.phone}\n"
                 f"Mail: {advocate.email}\n"
+                f"Degree: {advocate.education}"
             )
 
             prompt_query = (
@@ -106,7 +107,7 @@ def generate_legal_doc_wordfile(request):
 
             messages = [
                 {"role": "system", "content": prompt_divorce[0]["style"]},
-                {"role": "user", "content": f"{advocate_details}\n{prompt_query}"}
+                {"role": "user", "content": f"{advocate_details},{prompt_query}"}
             ]
             prompt_template = prompt_divorce
 
@@ -292,7 +293,7 @@ def generate_legal_doc_wordfile(request):
             with tempfile.NamedTemporaryFile(delete=False, suffix=".pdf") as tmp:
                 tmp_path = tmp.name
 
-            generate_professional_pdf(tmp_path, content)
+            generate_professional_pdf(tmp_path, content,advocate)
 
             with open(tmp_path, "rb") as f:
                 if index == 0:
@@ -334,7 +335,8 @@ def signup_view(request):
                 phone=form.cleaned_data['phone'],
                 enrollment_number=form.cleaned_data['enrollment_number'],
                 email=form.cleaned_data['email'],
-                address=form.cleaned_data['address']
+                address=form.cleaned_data['address'],
+                education=form.cleaned_data['education']
             )
 
             return redirect("advocate_login")
@@ -401,5 +403,4 @@ def save_client_data(request):
     except Exception as e:
         logger.error("Error in save_client_data: %s", str(e), exc_info=True)
         return JsonResponse({"status": "error", "message": str(e)}, status=500)
-    
 

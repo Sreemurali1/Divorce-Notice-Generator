@@ -13,11 +13,14 @@ class SignupForm(forms.ModelForm):
     first_name = forms.CharField(required=True)
     last_name = forms.CharField(required=True)
     address = forms.CharField(required=True,max_length=100)
-    phone = forms.CharField(required=False, max_length=20) 
+    phone = forms.CharField(required=False, max_length=20)
+    education = forms.CharField(required=True,max_length=30)
+
+
 
     class Meta:
         model = User
-        fields = ['username', 'email','first_name', 'last_name', 'enrollment_number', 'phone','address']
+        fields = ['username', 'email','first_name', 'last_name', 'enrollment_number', 'phone','address',"education"]
 
     def clean(self):
         cleaned_data = super().clean()

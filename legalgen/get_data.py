@@ -13,7 +13,8 @@ def post_advocate_details(request):
                 enrollment_number=request.POST.get("enrollment_number", ""),
                 address=request.POST.get("address", ""),
                 phone=request.POST.get("phone", ""),
-                email=request.POST.get("email", "")
+                email=request.POST.get("email", ""),
+                education=request.POST.get("education","")
             )
             return JsonResponse({"message": "Advocate details saved successfully.", "id": advocate.id}, status=201)
         except Exception as e:

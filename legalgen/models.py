@@ -8,12 +8,14 @@ class Advocate(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     name = models.CharField(max_length=100, blank=True, null=True)
     phone = models.CharField(max_length=20, blank=True, null=True)
+    education = models.CharField(max_length=100, help_text="Example: BA LL.B., BBA LL.B., B.Com LL.B.",null=True)
     enrollment_number = models.CharField(max_length=50, unique=True, blank=True, null=True)
     email = models.EmailField(blank=True, null=True)
     address = models.CharField(max_length=100, blank=True, null=True)
 
     def __str__(self):
         return self.name or str(self.user)
+    
 
 class Client(models.Model):
     client_name = models.CharField(max_length=100, blank=True, null=True)
@@ -151,5 +153,6 @@ class LegalSession(models.Model):
 
     def __str__(self):
         return f"Session {self.session_id} ({self.status})"
+
 
 
